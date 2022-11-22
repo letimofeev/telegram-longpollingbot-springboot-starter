@@ -34,9 +34,12 @@ public class TelegramBotUpdateDispatcher implements UpdateDispatcher {
             Optional<Method> methodOptional = methodSelector.lookupHandlerMappingMethod(update, handler);
             if (methodOptional.isPresent()) {
                 Method method = methodOptional.get();
-                PartialBotApiMethod<Message> responseApiMethod = methodApplier.applyHandlerMappingMethod(update, method, handler);
-                Method apiMethodExecutor = methodExecutorResolver.getApiMethodExecutionMethod(responseApiMethod);
-                ReflectionUtils.invokeMethod(apiMethodExecutor, bot, responseApiMethod);
+                List<PartialBotApiMethod<Message>> apiMethods = methodApplier.applyHandlerMappingMethod(update, method, handler);
+                for (PartialBotApiMethod<Message> apiMethod : apiMethods) {
+                    Method apiMethodExecutor = methodExecutorResolver.getApiMethodExecutionMethod(apiMethod);
+                    ReflectionUtils.invokeMethod(apiMethodExecutor, bot, apiMethod);
+                }
+                return;
             }
         }
         throw new NoUpdateHandlerFoundException("No handlers found for update: " + update);

@@ -9,15 +9,23 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 @Component
 public class TelegramBotUpdateMappingMethodApplier implements UpdateMappingMethodApplier {
 
     @Override
     @SuppressWarnings("unchecked")
-    public PartialBotApiMethod<Message> applyHandlerMappingMethod(Update update, Method method, Object handler) {
+    public List<PartialBotApiMethod<Message>> applyHandlerMappingMethod(Update update, Method method, Object handler) {
         validateMethodSignature(method);
-        return (PartialBotApiMethod<Message>) ReflectionUtils.invokeMethod(method, handler, update);
+        Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);
+        Objects.requireNonNull(apiMethods);
+        if (apiMethods instanceof Collection) {
+            return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
+        }
+        return List.of((PartialBotApiMethod<Message>) apiMethods);
     }
 
     private void validateMethodSignature(Method method) {
@@ -52,9 +60,9 @@ public class TelegramBotUpdateMappingMethodApplier implements UpdateMappingMetho
 
     private void validateReturnType(Method method) {
         Class<?> returnType = method.getReturnType();
-        if (!PartialBotApiMethod.class.isAssignableFrom(returnType)) {
+        if (!(PartialBotApiMethod.class.isAssignableFrom(returnType) || Collection.class.isAssignableFrom(returnType))) {
             String message = String.format("Unresolved return type for annotated as @UpdateMapping method %s, " +
-                    "expected instance of %s, found %s", method, PartialBotApiMethod.class, returnType);
+                    "expected instance of %s or Collection, found %s", method, PartialBotApiMethod.class, returnType);
             throw new IllegalStateException(message);
         }
     }
