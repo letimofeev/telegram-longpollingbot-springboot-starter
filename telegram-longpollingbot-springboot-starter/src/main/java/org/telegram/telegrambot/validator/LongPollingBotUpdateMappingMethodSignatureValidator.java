@@ -1,6 +1,7 @@
-package org.telegram.telegrambot.handler;
+package org.telegram.telegrambot.validator;
 
 import org.telegram.telegrambot.expection.UpdateMappingMethodSignatureValidationException;
+import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -8,7 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Collection;
 
-public class LongPollingBotUpdateMappingMethodSignatureValidator implements UpdateMappingMethodSignatureValidator {
+public class LongPollingBotUpdateMappingMethodSignatureValidator extends UpdateMappingMethodSignatureValidator {
 
     private static final int REQUIRED_PARAMETERS_NUMBER = 1;
     private static final Class<?> REQUIRED_PARAMETER_TYPE = Update.class;

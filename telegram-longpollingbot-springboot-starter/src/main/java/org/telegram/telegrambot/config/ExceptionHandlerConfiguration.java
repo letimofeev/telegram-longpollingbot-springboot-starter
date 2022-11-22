@@ -5,43 +5,49 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambot.annotation.ExceptionHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
 import org.telegram.telegrambot.expection.DefaultExceptionHandler;
-import org.telegram.telegrambot.expection.ExceptionHandler;
-import org.telegram.telegrambot.model.ExceptionHandlerContainer;
+import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
+import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
+import org.telegram.telegrambot.validator.LongBollingBotExceptionMappingMethodSignatureValidator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-
-import java.util.List;
 
 @Configuration
 public class ExceptionHandlerConfiguration {
 
     @Bean
-    public ExceptionHandler defaultExceptionHandlerWithDefaultMessage(TelegramLongPollingBot bot) {
+    public ExceptionMappingMethodSignatureValidator exceptionMappingMethodSignatureValidator() {
+        return new LongBollingBotExceptionMappingMethodSignatureValidator();
+    }
+
+    @Bean
+    public ExceptionHandlerAnnotationBeanPostProcessor exceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer,
+                                                                                                   ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
+        return new ExceptionHandlerAnnotationBeanPostProcessor(methodContainer, methodSignatureValidator);
+    }
+
+    @Bean
+    public DefaultExceptionHandler defaultExceptionHandlerWithDefaultMessage(TelegramLongPollingBot bot) {
         return new DefaultExceptionHandler("Something went wrong...", bot);
     }
 
     @Bean
     @ConditionalOnProperty("telegrambot.exception.default-message")
-    public ExceptionHandler defaultExceptionHandlerWithMessage(@Value("${telegrambot.exception.default-message}") String message, TelegramLongPollingBot bot) {
+    public DefaultExceptionHandler defaultExceptionHandlerWithMessage(@Value("${telegrambot.exception.default-message}") String message, TelegramLongPollingBot bot) {
         return new DefaultExceptionHandler(message, bot);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ExceptionHandlerContainer exceptionHandlerContainer() {
-        return new ExceptionHandlerContainer();
+    public ExceptionMappingMethodContainer exceptionHandlerContainer() {
+        return new ExceptionMappingMethodContainer();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public ExceptionHandlerAspect exceptionHandlerAspect(ExceptionHandlerContainer exceptionHandlerContainer) {
-        return new ExceptionHandlerAspect(exceptionHandlerContainer);
+    public ExceptionHandlerAspect exceptionHandlerAspect(ExceptionMappingMethodContainer exceptionMappingMethodContainer) {
+        return new ExceptionHandlerAspect(exceptionMappingMethodContainer);
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public ExceptionHandlerContainerInitializer handlerContainerInitializer(List<ExceptionHandler> handlers, ExceptionHandlerContainer exceptionHandlerContainer) {
-        return new ExceptionHandlerContainerInitializer(handlers, exceptionHandlerContainer);
-    }
 }

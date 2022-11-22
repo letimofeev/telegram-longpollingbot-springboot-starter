@@ -3,7 +3,7 @@ package org.telegram.telegrambot.annotation;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
-import org.telegram.telegrambot.handler.UpdateMappingMethodSignatureValidator;
+import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 

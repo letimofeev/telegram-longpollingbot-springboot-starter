@@ -6,13 +6,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class UpdateMappingMethodContainer {
 
-    private final Map<String, MethodTargetPair> invokerByState = new ConcurrentHashMap<>();
+    private final Map<String, MethodTargetPair> methodTargetPairByState = new ConcurrentHashMap<>();
 
     public Optional<MethodTargetPair> getMappingMethod(String state) {
-        return Optional.ofNullable(invokerByState.get(state.toLowerCase()));
+        return Optional.ofNullable(methodTargetPairByState.get(state.toLowerCase()));
     }
 
-    public void putMappingMethod(String state, MethodTargetPair invoker) {
-        invokerByState.put(state.toLowerCase(), invoker);
+    public void putMappingMethod(String state, MethodTargetPair methodTargetPair) {
+        methodTargetPairByState.put(state.toLowerCase(), methodTargetPair);
     }
 }
