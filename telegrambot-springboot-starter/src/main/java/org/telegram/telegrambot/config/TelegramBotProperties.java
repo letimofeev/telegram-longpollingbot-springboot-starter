@@ -7,7 +7,6 @@ public class TelegramBotProperties {
 
     private String username;
     private String token;
-    private String initialState;
 
     public String getUsername() {
         return username;
@@ -23,13 +22,5 @@ public class TelegramBotProperties {
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getInitialState() {
-        return initialState;
-    }
-
-    public void setInitialState(String initialState) {
-        this.initialState = initialState;
     }
 }
