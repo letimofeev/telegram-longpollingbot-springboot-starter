@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.state;
+package org.telegram.telegrambot.repository;
 
 public interface StateSource {
 

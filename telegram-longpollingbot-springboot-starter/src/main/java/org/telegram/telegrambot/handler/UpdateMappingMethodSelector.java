@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface UpdateMappingMethodSelector {
 
-    Optional<Method> lookupHandlerMappingMethod(Update update, Object handler);
+    Optional<Method> lookupHandlerMappingMethod(String state, Object handler);
 }

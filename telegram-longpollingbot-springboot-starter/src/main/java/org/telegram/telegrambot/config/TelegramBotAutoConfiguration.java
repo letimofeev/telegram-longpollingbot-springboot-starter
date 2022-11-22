@@ -7,9 +7,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.UpdateHandler;
+import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.bot.UpdateDispatcherTelegramLongPollingBot;
 import org.telegram.telegrambot.handler.*;
-import org.telegram.telegrambot.state.StateSource;
+import org.telegram.telegrambot.repository.StateSource;
+import org.telegram.telegrambot.repository.UpdateMappingMethodContainer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -26,14 +28,20 @@ import java.util.List;
 )
 public class TelegramBotAutoConfiguration {
 
-    @Autowired
-    @UpdateHandler
-    private List<Object> handlers;
-
     @Bean
     @ConditionalOnMissingBean
     public TelegramBotsApi telegramBotsApi() throws TelegramApiException {
         return new TelegramBotsApi(DefaultBotSession.class);
+    }
+
+    @Bean
+    public UpdateMappingMethodContainer methodInvokerContainer() {
+        return new UpdateMappingMethodContainer();
+    }
+
+    @Bean
+    public UpdateHandlerAnnotationBeanPostProcessor updateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodInvokerContainer, UpdateMappingMethodSelector methodSelector) {
+        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer, methodSelector);
     }
 
     @Bean
@@ -44,22 +52,23 @@ public class TelegramBotAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UpdateMappingMethodSelector methodSelector(StateSource stateSource) {
-        return new LongPollingBotUpdateMappingMethodSelector(stateSource);
+    public UpdateMappingMethodSelector methodSelector() {
+        return new LongPollingBotUpdateMappingMethodSelector();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public UpdateMappingMethodApplier methodApplier() {
-        return new LongPollingBotUpdateMappingMethodApplier();
+    public UpdateMappingMethodInvoker methodApplier() {
+        return new LongPollingBotUpdateMappingMethodInvoker();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public UpdateDispatcher updateDispatcher(UpdateMappingMethodSelector methodSelector,
-                                             UpdateMappingMethodApplier methodApplier,
+    public UpdateDispatcher updateDispatcher(StateSource stateSource,
+                                             UpdateMappingMethodContainer mappingMethodContainer,
+                                             UpdateMappingMethodInvoker methodInvoker,
                                              BotApiMethodExecutorResolver methodExecutorResolver) {
-        return new LongPollingBotUpdateDispatcher(handlers, methodSelector, methodApplier, methodExecutorResolver);
+        return new LongPollingBotUpdateDispatcher(stateSource, mappingMethodContainer, methodInvoker, methodExecutorResolver);
     }
 
     @Bean

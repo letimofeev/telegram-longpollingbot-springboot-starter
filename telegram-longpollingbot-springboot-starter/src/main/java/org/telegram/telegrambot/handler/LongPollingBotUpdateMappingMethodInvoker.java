@@ -2,6 +2,7 @@ package org.telegram.telegrambot.handler;
 
 import org.springframework.util.ReflectionUtils;
 import org.telegram.telegrambot.expection.UpdateMappingMethodValidationException;
+import org.telegram.telegrambot.model.UpdateMappingMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,11 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class LongPollingBotUpdateMappingMethodApplier implements UpdateMappingMethodApplier {
+public class LongPollingBotUpdateMappingMethodInvoker implements UpdateMappingMethodInvoker {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<PartialBotApiMethod<Message>> applyHandlerMappingMethod(Update update, Method method, Object handler) {
+    public List<PartialBotApiMethod<Message>> invokeHandlerMappingMethod(Update update, UpdateMappingMethod mappingMethod) {
+        Method method = mappingMethod.getMethod();
+        Object handler = mappingMethod.getHandler();
         validateMethodSignature(method);
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);
         Objects.requireNonNull(apiMethods, String.format("@HandlerMapping method %s returned null", method));
