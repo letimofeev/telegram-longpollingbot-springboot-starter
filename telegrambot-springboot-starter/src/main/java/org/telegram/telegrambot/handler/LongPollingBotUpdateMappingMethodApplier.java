@@ -21,6 +21,7 @@ public class LongPollingBotUpdateMappingMethodApplier implements UpdateMappingMe
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);
         Objects.requireNonNull(apiMethods);
         if (apiMethods instanceof Collection) {
+            validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
         }
         return List.of((PartialBotApiMethod<Message>) apiMethods);
@@ -62,6 +63,16 @@ public class LongPollingBotUpdateMappingMethodApplier implements UpdateMappingMe
             String message = String.format("Unresolved return type for annotated as @UpdateMapping method %s, " +
                     "expected instance of %s or Collection, found %s", method, PartialBotApiMethod.class, returnType);
             throw new IllegalStateException(message);
+        }
+    }
+
+    private void validateCollection(Collection<?> apiMethods, Method method) {
+        for (Object apiMethod : apiMethods) {
+            if (!(apiMethod instanceof PartialBotApiMethod)) {
+                String message = String.format("Unresolved type %s in Collection " +
+                        "for annotated as @UpdateMapping method %s", apiMethod.getClass(), method);
+                throw new IllegalStateException(message);
+            }
         }
     }
 }
