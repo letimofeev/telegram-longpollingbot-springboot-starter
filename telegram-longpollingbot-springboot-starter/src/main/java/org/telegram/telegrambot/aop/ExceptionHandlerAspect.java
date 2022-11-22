@@ -32,11 +32,11 @@ public class ExceptionHandlerAspect {
     }
 
     private Object handleException(ProceedingJoinPoint joinPoint, Exception e) throws Exception {
-        log.error("Exception during onUpdateReceive() method, nested exception: {}", e.toString());
+        log.warn("Exception during onUpdateReceive() method, nested exception: {}", e.toString());
         Optional<ExceptionHandler> optional = exceptionHandlerContainer.getExceptionHandler(e.getClass());
         if (optional.isPresent()) {
             ExceptionHandler exceptionHandler = optional.get();
-            log.info("Using ExceptionHandler: {}", exceptionHandler.getClass().toString());
+            log.warn("Using ExceptionHandler: {}", exceptionHandler.getClass().toString());
             Update update = (Update) joinPoint.getArgs()[0];
             exceptionHandler.handleException(update, e);
             return null;

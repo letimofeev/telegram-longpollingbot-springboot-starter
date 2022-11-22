@@ -16,11 +16,9 @@ public class ExceptionHandlerContainer {
             Optional<Class<? extends Exception>> parentType = exceptionHandlerByExceptionType.keySet().stream()
                     .filter(currentType -> currentType.isAssignableFrom(exceptionType))
                     .findFirst();
-            if (parentType.isPresent()) {
-                return Optional.ofNullable(exceptionHandlerByExceptionType.get(parentType.get()));
-            }
+            return parentType.map(exceptionHandlerByExceptionType::get);
         }
-        return Optional.empty();
+        return Optional.of(exceptionHandler);
     }
 
     public void putExceptionHandler(Class<? extends Exception> exceptionType, ExceptionHandler exceptionHandler) {

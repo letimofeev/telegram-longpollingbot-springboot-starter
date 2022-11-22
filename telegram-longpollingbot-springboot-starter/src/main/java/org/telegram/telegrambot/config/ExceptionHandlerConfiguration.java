@@ -19,11 +19,13 @@ public class ExceptionHandlerConfiguration {
 
     @Bean
     @ConditionalOnProperty("telegrambot.exception.default-message")
+    @ConditionalOnMissingBean
     public ExceptionHandler defaultExceptionHandlerWithMessage(@Value("${telegrambot.exception.default-message}") String message, TelegramLongPollingBot bot) {
         return new DefaultExceptionHandler(message, bot);
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public ExceptionHandler defaultExceptionHandlerWithDefaultMessage(TelegramLongPollingBot bot) {
         return new DefaultExceptionHandler("Something went wrong...", bot);
     }
