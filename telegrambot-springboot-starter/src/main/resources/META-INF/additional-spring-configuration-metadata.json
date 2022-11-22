@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "telegrambot.initial-state",
+      "type": "java.lang.String",
+      "description": "Initial state when user text bot for the first time."
+    }
+  ]
+}
