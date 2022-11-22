@@ -43,7 +43,7 @@ public class TelegramBotUpdateMappingMethodApplier implements UpdateMappingMetho
         Parameter[] parameters = method.getParameters();
         Parameter parameter = parameters[0];
         Class<?> parameterType = parameter.getType();
-        if (!parameterType.isAssignableFrom(Update.class)) {
+        if (!Update.class.isAssignableFrom(parameterType)) {
             String message = String.format("Unresolved parameter for annotated as @UpdateMapping method %s, " +
                     "expected instance of %s, found %s", method, Update.class, parameterType);
             throw new IllegalStateException(message);
@@ -52,7 +52,7 @@ public class TelegramBotUpdateMappingMethodApplier implements UpdateMappingMetho
 
     private void validateReturnType(Method method) {
         Class<?> returnType = method.getReturnType();
-        if (!returnType.isAssignableFrom(PartialBotApiMethod.class)) {
+        if (!PartialBotApiMethod.class.isAssignableFrom(returnType)) {
             String message = String.format("Unresolved return type for annotated as @UpdateMapping method %s, " +
                     "expected instance of %s, found %s", method, PartialBotApiMethod.class, returnType);
             throw new IllegalStateException(message);
