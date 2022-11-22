@@ -45,6 +45,7 @@ public class ExceptionHandlerAspect {
             ReflectionUtils.invokeMethod(method, target, update, e);
             return null;
         }
+        log.warn("No handlers found for exception {}", e.getClass());
         throw e;
     }
 }
