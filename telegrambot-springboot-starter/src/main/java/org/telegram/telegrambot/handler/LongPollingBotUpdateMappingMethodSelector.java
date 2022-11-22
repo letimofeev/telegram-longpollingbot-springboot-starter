@@ -23,7 +23,7 @@ public class LongPollingBotUpdateMappingMethodSelector implements UpdateMappingM
             if (annotation != null) {
                 long chatId = update.getMessage().getChatId();
                 String state = stateSource.getState(chatId);
-                if (state.equals(annotation.state())) {
+                if (state.equalsIgnoreCase(annotation.state())) {
                     return Optional.of(method);
                 }
             }
