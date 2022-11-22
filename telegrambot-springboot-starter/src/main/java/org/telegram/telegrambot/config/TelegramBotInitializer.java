@@ -1,0 +1,25 @@
+package org.telegram.telegrambot.config;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+
+import java.util.List;
+
+public class TelegramBotInitializer implements InitializingBean {
+
+    private final List<TelegramLongPollingBot> bots;
+    private final TelegramBotsApi telegramBotsApi;
+
+    public TelegramBotInitializer(List<TelegramLongPollingBot> bots, TelegramBotsApi telegramBotsApi) {
+        this.bots = bots;
+        this.telegramBotsApi = telegramBotsApi;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (TelegramLongPollingBot bot : bots) {
+            telegramBotsApi.registerBot(bot);
+        }
+    }
+}

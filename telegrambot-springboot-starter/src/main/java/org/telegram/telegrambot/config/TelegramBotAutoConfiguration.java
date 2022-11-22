@@ -11,6 +11,7 @@ import org.telegram.telegrambot.annotation.UpdateHandler;
 import org.telegram.telegrambot.bot.TelegramBot;
 import org.telegram.telegrambot.handler.*;
 import org.telegram.telegrambot.state.StateSource;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
@@ -26,12 +27,6 @@ import java.util.List;
 )
 @EnableConfigurationProperties(TelegramBotProperties.class)
 public class TelegramBotAutoConfiguration {
-
-    @Value("${telegrambot.username}}")
-    private String botUsername;
-
-    @Value("${telegrambot.token}")
-    private String botToken;
 
     @Autowired
     @UpdateHandler
@@ -71,8 +66,16 @@ public class TelegramBotAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    public TelegramBotInitializer telegramBotInitializer(List<TelegramLongPollingBot> bots, TelegramBotsApi telegramBotsApi) {
+        return new TelegramBotInitializer(bots, telegramBotsApi);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnProperty("telegrambot.token")
-    public TelegramBot telegramBot(TelegramBotsApi telegramBotsApi, UpdateDispatcher updateDispatcher) {
-        return new TelegramBot(botUsername, botToken, telegramBotsApi, updateDispatcher);
+    public TelegramBot telegramBot(@Value("${telegrambot.username}}") String botUsername,
+                                   @Value("${telegrambot.token}") String botToken,
+                                   UpdateDispatcher updateDispatcher) {
+        return new TelegramBot(botUsername, botToken, updateDispatcher);
     }
 }
