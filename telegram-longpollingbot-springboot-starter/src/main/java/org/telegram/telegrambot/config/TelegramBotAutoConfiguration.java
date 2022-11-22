@@ -1,12 +1,10 @@
 package org.telegram.telegrambot.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.telegram.telegrambot.annotation.UpdateHandler;
 import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.bot.UpdateDispatcherTelegramLongPollingBot;
 import org.telegram.telegrambot.handler.*;
@@ -40,8 +38,15 @@ public class TelegramBotAutoConfiguration {
     }
 
     @Bean
-    public UpdateHandlerAnnotationBeanPostProcessor updateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodInvokerContainer, UpdateMappingMethodSelector methodSelector) {
-        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer, methodSelector);
+    public UpdateMappingMethodSignatureValidator methodSignatureValidator() {
+        return new LongPollingBotUpdateMappingMethodSignatureValidator();
+    }
+
+    @Bean
+    public UpdateHandlerAnnotationBeanPostProcessor updateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodInvokerContainer,
+                                                                                             UpdateMappingMethodSelector methodSelector,
+                                                                                             UpdateMappingMethodSignatureValidator methodSignatureValidator) {
+        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer, methodSelector, methodSignatureValidator);
     }
 
     @Bean

@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambot.handler.UpdateMappingMethodSelector;
+import org.telegram.telegrambot.handler.UpdateMappingMethodSignatureValidator;
 import org.telegram.telegrambot.model.UpdateMappingMethod;
 import org.telegram.telegrambot.repository.UpdateMappingMethodContainer;
 
@@ -13,10 +14,12 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
 
     private final UpdateMappingMethodContainer methodContainer;
     private final UpdateMappingMethodSelector methodSelector;
+    private final UpdateMappingMethodSignatureValidator methodSignatureValidator;
 
-    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSelector methodSelector) {
+    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSelector methodSelector, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
         this.methodSelector = methodSelector;
+        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
@@ -25,6 +28,7 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
         for (Method method : methods) {
             UpdateMapping annotation = method.getAnnotation(UpdateMapping.class);
             if (annotation != null) {
+                methodSignatureValidator.validateMethodSignature(method);
                 String state = annotation.state();
                 methodContainer.putMappingMethod(state, new UpdateMappingMethod(method, bean));
             }
