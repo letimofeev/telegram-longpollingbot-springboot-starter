@@ -8,6 +8,7 @@ import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
@@ -27,9 +28,19 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
             if (annotation != null) {
                 methodSignatureValidator.validateMethodSignature(method);
                 String state = annotation.state();
+                validateDuplicates(state, method);
                 methodContainer.putMappingMethod(state, new MethodTargetPair(method, bean));
             }
         }
         return bean;
+    }
+
+    private void validateDuplicates(String state, Method method) {
+        Optional<MethodTargetPair> mappingMethodOptional = methodContainer.getMappingMethod(state);
+        if (mappingMethodOptional.isPresent()) {
+            Method storedMethod = mappingMethodOptional.get().getMethod();
+            String message = String.format("Found duplicate method annotated as @UpdateMapping with same state: %s and %s", storedMethod, method);
+            throw new IllegalStateException(message);
+        }
     }
 }
