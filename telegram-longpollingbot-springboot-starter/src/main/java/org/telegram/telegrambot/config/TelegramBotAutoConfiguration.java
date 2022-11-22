@@ -56,13 +56,7 @@ public class TelegramBotAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UpdateMappingMethodSelector methodSelector() {
-        return new LongPollingBotUpdateMappingMethodSelector();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public UpdateMappingMethodInvoker methodApplier() {
+    public UpdateMappingMethodInvoker methodInvoker() {
         return new LongPollingBotUpdateMappingMethodInvoker();
     }
 
