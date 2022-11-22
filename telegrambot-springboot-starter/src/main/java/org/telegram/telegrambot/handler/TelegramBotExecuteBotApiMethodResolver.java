@@ -1,6 +1,5 @@
 package org.telegram.telegrambot.handler;
 
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.expection.BotApiMethodExecutorResolverException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 import static org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods;
 
-@Component
 public class TelegramBotExecuteBotApiMethodResolver implements BotApiMethodExecutorResolver {
 
     private static final String TARGET_METHOD_NAME = "execute";

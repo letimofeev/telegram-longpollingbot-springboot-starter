@@ -1,6 +1,5 @@
 package org.telegram.telegrambot.handler;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,7 +11,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 public class TelegramBotUpdateDispatcher implements UpdateDispatcher {
 
     private final List<Object> handlers;

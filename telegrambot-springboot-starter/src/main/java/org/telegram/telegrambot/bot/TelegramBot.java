@@ -13,8 +13,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private final String botUsername;
     private final String botToken;
 
-    protected final TelegramBotsApi telegramBotsApi;
-    protected final UpdateDispatcher updateDispatcher;
+    private final TelegramBotsApi telegramBotsApi;
+    private final UpdateDispatcher updateDispatcher;
 
     public TelegramBot(String botUsername, String botToken,
                        TelegramBotsApi telegramBotsApi, UpdateDispatcher updateDispatcher) {

@@ -1,6 +1,5 @@
 package org.telegram.telegrambot.handler;
 
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.state.StateSource;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-@Component
 public class TelegramBotUpdateMappingMethodSelector implements UpdateMappingMethodSelector {
 
     private final StateSource stateSource;
