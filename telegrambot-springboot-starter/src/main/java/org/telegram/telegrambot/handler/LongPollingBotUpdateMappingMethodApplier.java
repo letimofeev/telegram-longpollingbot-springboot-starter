@@ -19,7 +19,7 @@ public class LongPollingBotUpdateMappingMethodApplier implements UpdateMappingMe
     public List<PartialBotApiMethod<Message>> applyHandlerMappingMethod(Update update, Method method, Object handler) {
         validateMethodSignature(method);
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);
-        Objects.requireNonNull(apiMethods);
+        Objects.requireNonNull(apiMethods, String.format("@HandlerMapping method %s returned null", method));
         if (apiMethods instanceof Collection) {
             validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
