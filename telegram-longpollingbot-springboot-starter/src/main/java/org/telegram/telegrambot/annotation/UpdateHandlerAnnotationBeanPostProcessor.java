@@ -13,12 +13,10 @@ import java.lang.reflect.Method;
 public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final UpdateMappingMethodContainer methodContainer;
-    private final UpdateMappingMethodSelector methodSelector;
     private final UpdateMappingMethodSignatureValidator methodSignatureValidator;
 
-    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSelector methodSelector, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
+    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
-        this.methodSelector = methodSelector;
         this.methodSignatureValidator = methodSignatureValidator;
     }
 

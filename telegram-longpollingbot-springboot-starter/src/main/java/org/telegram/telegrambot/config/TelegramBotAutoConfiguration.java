@@ -44,9 +44,8 @@ public class TelegramBotAutoConfiguration {
 
     @Bean
     public UpdateHandlerAnnotationBeanPostProcessor updateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodInvokerContainer,
-                                                                                             UpdateMappingMethodSelector methodSelector,
                                                                                              UpdateMappingMethodSignatureValidator methodSignatureValidator) {
-        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer, methodSelector, methodSignatureValidator);
+        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer, methodSignatureValidator);
     }
 
     @Bean
