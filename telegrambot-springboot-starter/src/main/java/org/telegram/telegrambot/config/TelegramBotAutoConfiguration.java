@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.UpdateHandler;
-import org.telegram.telegrambot.bot.TelegramBot;
+import org.telegram.telegrambot.bot.UpdateDispatcherTelegramLongPollingBot;
 import org.telegram.telegrambot.handler.*;
 import org.telegram.telegrambot.state.StateSource;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -25,7 +24,6 @@ import java.util.List;
         havingValue = "true",
         matchIfMissing = true
 )
-@EnableConfigurationProperties(TelegramBotProperties.class)
 public class TelegramBotAutoConfiguration {
 
     @Autowired
@@ -73,9 +71,9 @@ public class TelegramBotAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty("telegrambot.token")
-    public TelegramBot telegramBot(@Value("${telegrambot.username}}") String botUsername,
-                                   @Value("${telegrambot.token}") String botToken,
-                                   UpdateDispatcher updateDispatcher) {
-        return new TelegramBot(botUsername, botToken, updateDispatcher);
+    public UpdateDispatcherTelegramLongPollingBot telegramBot(@Value("${telegrambot.username}}") String botUsername,
+                                                              @Value("${telegrambot.token}") String botToken,
+                                                              UpdateDispatcher updateDispatcher) {
+        return new UpdateDispatcherTelegramLongPollingBot(botUsername, botToken, updateDispatcher);
     }
 }
