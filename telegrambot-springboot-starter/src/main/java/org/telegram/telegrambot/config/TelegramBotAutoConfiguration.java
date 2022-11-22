@@ -71,9 +71,9 @@ public class TelegramBotAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty("telegrambot.token")
-    public UpdateDispatcherTelegramLongPollingBot telegramBot(@Value("${telegrambot.username}}") String botUsername,
-                                                              @Value("${telegrambot.token}") String botToken,
-                                                              UpdateDispatcher updateDispatcher) {
+    public UpdateDispatcherTelegramLongPollingBot longPollingBot(@Value("${telegrambot.username}}") String botUsername,
+                                                                 @Value("${telegrambot.token}") String botToken,
+                                                                 UpdateDispatcher updateDispatcher) {
         return new UpdateDispatcherTelegramLongPollingBot(botUsername, botToken, updateDispatcher);
     }
 }
