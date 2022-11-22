@@ -11,11 +11,11 @@
     </parent>
 
     <groupId>org.telegram</groupId>
-    <artifactId>telegrambot-springboot-starter</artifactId>
+    <artifactId>telegram-longpollingbot-springboot-starter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>telegrambot-springboot-starter</name>
 
-    <description>telegrambot-springboot-starter</description>
+    <description>telegram-longpollingbot-springboot-starter</description>
 
     <properties>
         <java.version>11</java.version>

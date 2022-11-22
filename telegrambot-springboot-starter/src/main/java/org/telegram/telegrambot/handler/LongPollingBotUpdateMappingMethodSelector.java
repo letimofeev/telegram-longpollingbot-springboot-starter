@@ -7,11 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class TelegramBotUpdateMappingMethodSelector implements UpdateMappingMethodSelector {
+public class LongPollingBotUpdateMappingMethodSelector implements UpdateMappingMethodSelector {
 
     private final StateSource stateSource;
 
-    public TelegramBotUpdateMappingMethodSelector(StateSource stateSource) {
+    public LongPollingBotUpdateMappingMethodSelector(StateSource stateSource) {
         this.stateSource = stateSource;
     }
 

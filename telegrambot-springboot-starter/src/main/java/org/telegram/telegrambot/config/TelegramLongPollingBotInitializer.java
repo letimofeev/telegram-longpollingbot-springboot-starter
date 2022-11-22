@@ -6,12 +6,12 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 
 import java.util.List;
 
-public class TelegramBotInitializer implements InitializingBean {
+public class TelegramLongPollingBotInitializer implements InitializingBean {
 
     private final List<TelegramLongPollingBot> bots;
     private final TelegramBotsApi telegramBotsApi;
 
-    public TelegramBotInitializer(List<TelegramLongPollingBot> bots, TelegramBotsApi telegramBotsApi) {
+    public TelegramLongPollingBotInitializer(List<TelegramLongPollingBot> bots, TelegramBotsApi telegramBotsApi) {
         this.bots = bots;
         this.telegramBotsApi = telegramBotsApi;
     }

@@ -11,15 +11,15 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
-public class TelegramBotUpdateDispatcher implements UpdateDispatcher {
+public class LongPollingBotUpdateDispatcher implements UpdateDispatcher {
 
     private final List<Object> handlers;
     private final UpdateMappingMethodSelector methodSelector;
     private final UpdateMappingMethodApplier methodApplier;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
 
-    public TelegramBotUpdateDispatcher(List<Object> handlers, UpdateMappingMethodSelector methodSelector,
-                                       UpdateMappingMethodApplier methodApplier, BotApiMethodExecutorResolver methodExecutorResolver) {
+    public LongPollingBotUpdateDispatcher(List<Object> handlers, UpdateMappingMethodSelector methodSelector,
+                                          UpdateMappingMethodApplier methodApplier, BotApiMethodExecutorResolver methodExecutorResolver) {
         this.handlers = handlers;
         this.methodSelector = methodSelector;
         this.methodApplier = methodApplier;

@@ -39,19 +39,19 @@ public class TelegramBotAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public BotApiMethodExecutorResolver executeMethodResolver() {
-        return new TelegramBotExecuteBotApiMethodResolver();
+        return new LongPollingBotExecuteBotApiMethodResolver();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public UpdateMappingMethodSelector methodSelector(StateSource stateSource) {
-        return new TelegramBotUpdateMappingMethodSelector(stateSource);
+        return new LongPollingBotUpdateMappingMethodSelector(stateSource);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public UpdateMappingMethodApplier methodApplier() {
-        return new TelegramBotUpdateMappingMethodApplier();
+        return new LongPollingBotUpdateMappingMethodApplier();
     }
 
     @Bean
@@ -59,13 +59,13 @@ public class TelegramBotAutoConfiguration {
     public UpdateDispatcher updateDispatcher(UpdateMappingMethodSelector methodSelector,
                                              UpdateMappingMethodApplier methodApplier,
                                              BotApiMethodExecutorResolver methodExecutorResolver) {
-        return new TelegramBotUpdateDispatcher(handlers, methodSelector, methodApplier, methodExecutorResolver);
+        return new LongPollingBotUpdateDispatcher(handlers, methodSelector, methodApplier, methodExecutorResolver);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public TelegramBotInitializer telegramBotInitializer(List<TelegramLongPollingBot> bots, TelegramBotsApi telegramBotsApi) {
-        return new TelegramBotInitializer(bots, telegramBotsApi);
+    public TelegramLongPollingBotInitializer telegramBotInitializer(List<TelegramLongPollingBot> bots, TelegramBotsApi telegramBotsApi) {
+        return new TelegramLongPollingBotInitializer(bots, telegramBotsApi);
     }
 
     @Bean
