@@ -7,7 +7,7 @@ import org.telegram.telegrambot.repository.DefaultStateSource;
 import org.telegram.telegrambot.repository.StateSource;
 
 @Configuration
-public class StateSourceAutoConfiguration {
+public class StateSourceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

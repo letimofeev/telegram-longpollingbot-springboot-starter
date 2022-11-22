@@ -2,9 +2,9 @@ package org.telegram.telegrambot.handler;
 
 import org.springframework.util.ReflectionUtils;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
-import org.telegram.telegrambot.model.UpdateMappingMethod;
+import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.repository.StateSource;
-import org.telegram.telegrambot.repository.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -33,11 +33,11 @@ public class LongPollingBotUpdateDispatcher implements UpdateDispatcher {
     public void executeHandlerOnUpdate(Update update, TelegramLongPollingBot bot) {
         long chatId = update.getMessage().getChatId();
         String state = stateSource.getState(chatId);
-        Optional<UpdateMappingMethod> methodOptional = mappingMethodContainer.getMappingMethod(state);
+        Optional<MethodTargetPair> methodOptional = mappingMethodContainer.getMappingMethod(state);
         if (methodOptional.isEmpty()) {
             throw new NoUpdateHandlerFoundException("No handlers found for state: " + state);
         }
-        UpdateMappingMethod mappingMethod = methodOptional.get();
+        MethodTargetPair mappingMethod = methodOptional.get();
         List<PartialBotApiMethod<Message>> apiMethods = methodInvoker.invokeHandlerMappingMethod(update, mappingMethod);
         executeAllApiMethods(apiMethods, bot);
     }

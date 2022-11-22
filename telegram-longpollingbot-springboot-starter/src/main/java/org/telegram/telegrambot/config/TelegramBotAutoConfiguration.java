@@ -5,11 +5,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.bot.UpdateDispatcherTelegramLongPollingBot;
 import org.telegram.telegrambot.handler.*;
 import org.telegram.telegrambot.repository.StateSource;
-import org.telegram.telegrambot.repository.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -24,6 +25,7 @@ import java.util.List;
         havingValue = "true",
         matchIfMissing = true
 )
+@Import({StateSourceConfiguration.class, ExceptionHandlerConfiguration.class})
 public class TelegramBotAutoConfiguration {
 
     @Bean

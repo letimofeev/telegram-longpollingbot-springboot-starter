@@ -1,7 +1,7 @@
 package org.telegram.telegrambot.handler;
 
 import org.springframework.util.ReflectionUtils;
-import org.telegram.telegrambot.model.UpdateMappingMethod;
+import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,9 +15,9 @@ public class LongPollingBotUpdateMappingMethodInvoker implements UpdateMappingMe
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<PartialBotApiMethod<Message>> invokeHandlerMappingMethod(Update update, UpdateMappingMethod mappingMethod) {
+    public List<PartialBotApiMethod<Message>> invokeHandlerMappingMethod(Update update, MethodTargetPair mappingMethod) {
         Method method = mappingMethod.getMethod();
-        Object handler = mappingMethod.getHandler();
+        Object handler = mappingMethod.getTarget();
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);
         Objects.requireNonNull(apiMethods, String.format("@HandlerMapping method %s returned null", method));
         if (apiMethods instanceof Collection) {

@@ -4,8 +4,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambot.handler.UpdateMappingMethodSignatureValidator;
-import org.telegram.telegrambot.model.UpdateMappingMethod;
-import org.telegram.telegrambot.repository.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.model.MethodTargetPair;
+import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 
 import java.lang.reflect.Method;
 
@@ -27,7 +27,7 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
             if (annotation != null) {
                 methodSignatureValidator.validateMethodSignature(method);
                 String state = annotation.state();
-                methodContainer.putMappingMethod(state, new UpdateMappingMethod(method, bean));
+                methodContainer.putMappingMethod(state, new MethodTargetPair(method, bean));
             }
         }
         return bean;
