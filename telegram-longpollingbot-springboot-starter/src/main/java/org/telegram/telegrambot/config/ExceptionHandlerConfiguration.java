@@ -6,10 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.ExceptionHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
-import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.handler.ApiMethodsReturningMethodInvoker;
-import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
+import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
 
 @Configuration
 public class ExceptionHandlerConfiguration {

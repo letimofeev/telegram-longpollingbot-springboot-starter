@@ -1,4 +1,6 @@
-package org.telegram.telegrambot.model;
+package org.telegram.telegrambot.container;
+
+import org.telegram.telegrambot.dto.MethodTargetPair;
 
 import java.util.Map;
 import java.util.Optional;

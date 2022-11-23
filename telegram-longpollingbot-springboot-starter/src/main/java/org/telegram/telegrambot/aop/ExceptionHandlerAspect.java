@@ -6,8 +6,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambot.handler.ApiMethodsReturningMethodInvoker;
-import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
-import org.telegram.telegrambot.model.MethodTargetPair;
+import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
+import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Optional;

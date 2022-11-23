@@ -1,8 +1,8 @@
 package org.telegram.telegrambot.handler;
 
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
-import org.telegram.telegrambot.model.MethodTargetPair;
-import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.dto.MethodTargetPair;
+import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.repository.StateSource;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;

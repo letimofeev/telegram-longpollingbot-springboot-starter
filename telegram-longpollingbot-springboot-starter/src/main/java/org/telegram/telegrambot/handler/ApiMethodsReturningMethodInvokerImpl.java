@@ -1,7 +1,7 @@
 package org.telegram.telegrambot.handler;
 
 import org.springframework.util.ReflectionUtils;
-import org.telegram.telegrambot.model.MethodTargetPair;
+import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 

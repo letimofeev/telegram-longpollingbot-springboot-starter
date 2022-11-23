@@ -4,8 +4,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
-import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
-import org.telegram.telegrambot.model.MethodTargetPair;
+import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
+import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
 
 import java.lang.reflect.Method;

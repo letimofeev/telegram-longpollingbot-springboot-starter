@@ -9,7 +9,7 @@ import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProces
 import org.telegram.telegrambot.bot.DispatchedTelegramLongPollingBot;
 import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
 import org.telegram.telegrambot.handler.*;
-import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.repository.StateSource;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
