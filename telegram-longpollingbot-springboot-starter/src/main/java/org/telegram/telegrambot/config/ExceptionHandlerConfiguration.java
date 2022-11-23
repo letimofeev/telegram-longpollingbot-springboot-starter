@@ -6,12 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.ExceptionHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
-import org.telegram.telegrambot.bot.LongPollingBot;
+import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
-import org.telegram.telegrambot.expection.handler.ExceptionMappingMethodInvoker;
-import org.telegram.telegrambot.expection.handler.SendingExceptionMappingMethodInvoker;
+import org.telegram.telegrambot.handler.ApiMethodsReturningMethodInvoker;
 import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 @Configuration
 public class ExceptionHandlerConfiguration {
@@ -23,9 +21,8 @@ public class ExceptionHandlerConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DefaultExceptionHandler defaultExceptionHandler(@Value("${telegrambot.exception.default-message:Something went wrong...}") String message,
-                                                           LongPollingBot bot) {
-        return new DefaultExceptionHandler(message, bot);
+    public DefaultExceptionHandler defaultExceptionHandler(@Value("${telegrambot.exception.default-message:Something went wrong...}") String message) {
+        return new DefaultExceptionHandler(message);
     }
 
     @Bean
@@ -35,14 +32,9 @@ public class ExceptionHandlerConfiguration {
     }
 
     @Bean
-    public ExceptionMappingMethodInvoker exceptionMappingMethodInvoker(LongPollingBot bot) {
-        return new SendingExceptionMappingMethodInvoker(bot);
-    }
-
-    @Bean
     @ConditionalOnMissingBean
     public ExceptionHandlerAspect exceptionHandlerAspect(ExceptionMappingMethodContainer exceptionMappingMethodContainer,
-                                                         ExceptionMappingMethodInvoker exceptionMappingMethodInvoker) {
+                                                         ApiMethodsReturningMethodInvoker exceptionMappingMethodInvoker) {
         return new ExceptionHandlerAspect(exceptionMappingMethodContainer, exceptionMappingMethodInvoker);
     }
 }

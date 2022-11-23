@@ -1,10 +1,9 @@
 package org.telegram.telegrambot.handler;
 
-import org.telegram.telegrambot.bot.LongPollingBot;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
 import org.telegram.telegrambot.model.MethodTargetPair;
-import org.telegram.telegrambot.repository.StateSource;
 import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.repository.StateSource;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -16,9 +15,9 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
 
     private final StateSource stateSource;
     private final UpdateMappingMethodContainer mappingMethodContainer;
-    private final UpdateMappingMethodInvoker methodInvoker;
+    private final ApiMethodsReturningMethodInvoker methodInvoker;
 
-    public LongPollingBotUpdateResolver(StateSource stateSource, UpdateMappingMethodContainer mappingMethodContainer, UpdateMappingMethodInvoker methodInvoker) {
+    public LongPollingBotUpdateResolver(StateSource stateSource, UpdateMappingMethodContainer mappingMethodContainer, ApiMethodsReturningMethodInvoker methodInvoker) {
         this.stateSource = stateSource;
         this.mappingMethodContainer = mappingMethodContainer;
         this.methodInvoker = methodInvoker;
@@ -33,6 +32,6 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
             throw new NoUpdateHandlerFoundException("No handlers found for state: " + state);
         }
         MethodTargetPair mappingMethod = methodOptional.get();
-        return methodInvoker.invokeUpdateMappingMethod(update, mappingMethod);
+        return methodInvoker.invokeMethod(mappingMethod, update);
     }
 }

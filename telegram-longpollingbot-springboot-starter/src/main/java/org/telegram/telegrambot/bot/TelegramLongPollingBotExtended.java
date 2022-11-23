@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.List;
 
-public abstract class LongPollingBot extends TelegramLongPollingBot {
+public abstract class TelegramLongPollingBotExtended extends TelegramLongPollingBot {
 
     public abstract void executeApiMethod(PartialBotApiMethod<Message> apiMethod);
 

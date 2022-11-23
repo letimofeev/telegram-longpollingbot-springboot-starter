@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProcessor;
-import org.telegram.telegrambot.bot.DispatchedLongPollingBot;
-import org.telegram.telegrambot.bot.LongPollingBot;
+import org.telegram.telegrambot.bot.DispatchedTelegramLongPollingBot;
+import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
 import org.telegram.telegrambot.handler.*;
 import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.repository.StateSource;
@@ -44,15 +44,15 @@ public class TelegramBotAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UpdateMappingMethodInvoker methodInvoker() {
-        return new LongPollingBotUpdateMappingMethodInvoker();
+    public ApiMethodsReturningMethodInvoker methodInvoker() {
+        return new ApiMethodsReturningMethodInvokerImpl();
     }
 
     @Bean
     @ConditionalOnMissingBean
     public UpdateResolver updateDispatcher(StateSource stateSource,
                                            UpdateMappingMethodContainer mappingMethodContainer,
-                                           UpdateMappingMethodInvoker methodInvoker) {
+                                           ApiMethodsReturningMethodInvoker methodInvoker) {
         return new LongPollingBotUpdateResolver(stateSource, mappingMethodContainer, methodInvoker);
     }
 
@@ -65,10 +65,10 @@ public class TelegramBotAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty("telegrambot.token")
-    public LongPollingBot longPollingBot(@Value("${telegrambot.username}}") String botUsername,
-                                         @Value("${telegrambot.token}") String botToken,
-                                         UpdateResolver updateResolver,
-                                         BotApiMethodExecutorResolver methodExecutorResolver) {
-        return new DispatchedLongPollingBot(botUsername, botToken, updateResolver, methodExecutorResolver);
+    public TelegramLongPollingBotExtended longPollingBot(@Value("${telegrambot.username}}") String botUsername,
+                                                         @Value("${telegrambot.token}") String botToken,
+                                                         UpdateResolver updateResolver,
+                                                         BotApiMethodExecutorResolver methodExecutorResolver) {
+        return new DispatchedTelegramLongPollingBot(botUsername, botToken, updateResolver, methodExecutorResolver);
     }
 }

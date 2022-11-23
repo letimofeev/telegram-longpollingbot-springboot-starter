@@ -10,14 +10,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class DispatchedLongPollingBot extends LongPollingBot {
+public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBotExtended {
 
     private final String botUsername;
     private final String botToken;
     private final UpdateResolver updateResolver;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
 
-    public DispatchedLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver, BotApiMethodExecutorResolver methodExecutorResolver) {
+    public DispatchedTelegramLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver, BotApiMethodExecutorResolver methodExecutorResolver) {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.updateResolver = updateResolver;
