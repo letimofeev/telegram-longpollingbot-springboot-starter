@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.telegram.telegrambot.annotation.ExceptionMappingAnnotationBeanPostProcessor;
+import org.telegram.telegrambot.annotation.ExceptionHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
@@ -21,9 +21,9 @@ public class ExceptionHandlerConfiguration {
     }
 
     @Bean
-    public ExceptionMappingAnnotationBeanPostProcessor exceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer,
+    public ExceptionHandlerAnnotationBeanPostProcessor exceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer,
                                                                                                    ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
-        return new ExceptionMappingAnnotationBeanPostProcessor(methodContainer, methodSignatureValidator);
+        return new ExceptionHandlerAnnotationBeanPostProcessor(methodContainer, methodSignatureValidator);
     }
 
     @Bean

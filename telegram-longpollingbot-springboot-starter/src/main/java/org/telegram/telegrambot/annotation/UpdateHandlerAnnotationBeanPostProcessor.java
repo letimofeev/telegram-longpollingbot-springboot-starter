@@ -10,12 +10,12 @@ import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class UpdateMappingAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final UpdateMappingMethodContainer methodContainer;
     private final UpdateMappingMethodSignatureValidator methodSignatureValidator;
 
-    public UpdateMappingAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
+    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }
@@ -48,7 +48,7 @@ public class UpdateMappingAnnotationBeanPostProcessor implements BeanPostProcess
             Method storedMethod = mappingMethodOptional.get().getMethod();
             Object storedTarget = mappingMethodOptional.get().getTarget();
             String message = String.format("Found duplicate method annotated as @UpdateMapping with same state: " +
-                    "%s in class %s and method %s in class %s",
+                    "%s in class %s and %s in class %s",
                     storedMethod, storedTarget.getClass(), method, bean.getClass());
             throw new IllegalStateException(message);
         }
