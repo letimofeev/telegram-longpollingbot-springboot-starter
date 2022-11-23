@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.ExceptionMappingAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
-import org.telegram.telegrambot.expection.DefaultExceptionHandler;
+import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
 import org.telegram.telegrambot.validator.LongBollingBotExceptionMappingMethodSignatureValidator;
@@ -28,8 +28,8 @@ public class ExceptionHandlerConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DefaultExceptionHandler defaultExceptionHandlerWithMessage(@Value("${telegrambot.exception.default-message:Something went wrong...}") String message,
-                                                                      TelegramLongPollingBot bot) {
+    public DefaultExceptionHandler defaultExceptionHandler(@Value("${telegrambot.exception.default-message:Something went wrong...}") String message,
+                                                           TelegramLongPollingBot bot) {
         return new DefaultExceptionHandler(message, bot);
     }
 
@@ -44,5 +44,4 @@ public class ExceptionHandlerConfiguration {
     public ExceptionHandlerAspect exceptionHandlerAspect(ExceptionMappingMethodContainer exceptionMappingMethodContainer) {
         return new ExceptionHandlerAspect(exceptionMappingMethodContainer);
     }
-
 }

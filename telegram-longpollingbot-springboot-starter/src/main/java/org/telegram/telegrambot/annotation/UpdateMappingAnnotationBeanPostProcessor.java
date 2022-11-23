@@ -22,7 +22,15 @@ public class UpdateMappingAnnotationBeanPostProcessor implements BeanPostProcess
 
     @Override
     public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-        Method[] methods = bean.getClass().getDeclaredMethods();
+        Class<?> beanClass = bean.getClass();
+        if (beanClass.isAnnotationPresent(UpdateHandler.class)) {
+            collectAllUpdateMappings(bean, beanClass);
+        }
+        return bean;
+    }
+
+    private void collectAllUpdateMappings(Object bean, Class<?> beanClass) {
+        Method[] methods = beanClass.getDeclaredMethods();
         for (Method method : methods) {
             UpdateMapping annotation = method.getAnnotation(UpdateMapping.class);
             if (annotation != null) {
@@ -32,7 +40,6 @@ public class UpdateMappingAnnotationBeanPostProcessor implements BeanPostProcess
                 methodContainer.putMappingMethod(state, new MethodTargetPair(method, bean));
             }
         }
-        return bean;
     }
 
     private void validateDuplicates(String state, Method method) {

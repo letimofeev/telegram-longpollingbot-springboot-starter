@@ -3,7 +3,7 @@ package org.telegram.telegrambot.annotation;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
-import org.telegram.telegrambot.expection.DefaultExceptionHandler;
+import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
@@ -23,7 +23,15 @@ public class ExceptionMappingAnnotationBeanPostProcessor implements BeanPostProc
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, @NonNull String beanName) throws BeansException {
-        Method[] methods = bean.getClass().getDeclaredMethods();
+        Class<?> beanClass = bean.getClass();
+        if (beanClass.isAnnotationPresent(ExceptionHandler.class)) {
+            collectAllHandlerMappings(bean, beanClass);
+        }
+        return bean;
+    }
+
+    private void collectAllHandlerMappings(Object bean, Class<?> beanClass) {
+        Method[] methods = beanClass.getDeclaredMethods();
         for (Method method : methods) {
             ExceptionMapping annotation = method.getAnnotation(ExceptionMapping.class);
             if (annotation != null) {
@@ -32,10 +40,9 @@ public class ExceptionMappingAnnotationBeanPostProcessor implements BeanPostProc
                 putWithDuplicatesValidation(exceptionType, method, bean);
             }
         }
-        return bean;
     }
 
-    public void putWithDuplicatesValidation(Class<? extends Exception> exceptionType, Method method, Object target) {
+    private void putWithDuplicatesValidation(Class<? extends Exception> exceptionType, Method method, Object target) {
         Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.getExceptionMapping(exceptionType);
         if (exceptionMappingOptional.isPresent()) {
             MethodTargetPair storedExceptionMapping = exceptionMappingOptional.get();
