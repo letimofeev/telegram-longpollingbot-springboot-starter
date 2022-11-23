@@ -10,14 +10,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBot {
+public class DispatchedLongPollingBot extends LongPollingBot {
 
     private final String botUsername;
     private final String botToken;
     private final UpdateDispatcher updateDispatcher;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
 
-    public DispatchedTelegramLongPollingBot(String botUsername, String botToken, UpdateDispatcher updateDispatcher, BotApiMethodExecutorResolver methodExecutorResolver) {
+    public DispatchedLongPollingBot(String botUsername, String botToken, UpdateDispatcher updateDispatcher, BotApiMethodExecutorResolver methodExecutorResolver) {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.updateDispatcher = updateDispatcher;
@@ -40,7 +40,13 @@ public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBot {
     }
 
     @Override
-    public void executeAllApiMethods(List<PartialBotApiMethod<Message>> apiMethods) {
+    public void executeApiMethod(PartialBotApiMethod<Message> apiMethod) {
+        Method apiMethodExecutor = methodExecutorResolver.getApiMethodExecutionMethod(apiMethod);
+        ReflectionUtils.invokeMethod(apiMethodExecutor, this, apiMethod);
+    }
+
+    @Override
+    public void executeAllApiMethods(List<? extends PartialBotApiMethod<Message>> apiMethods) {
         for (PartialBotApiMethod<Message> apiMethod : apiMethods) {
             Method apiMethodExecutor = methodExecutorResolver.getApiMethodExecutionMethod(apiMethod);
             ReflectionUtils.invokeMethod(apiMethodExecutor, this, apiMethod);

@@ -1,6 +1,6 @@
 package org.telegram.telegrambot.handler;
 
-import org.telegram.telegrambot.bot.TelegramLongPollingBot;
+import org.telegram.telegrambot.bot.LongPollingBot;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
 import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.repository.StateSource;
@@ -25,7 +25,7 @@ public class LongPollingBotUpdateDispatcher implements UpdateDispatcher {
     }
 
     @Override
-    public void executeHandlerOnUpdate(Update update, TelegramLongPollingBot bot) {
+    public void executeHandlerOnUpdate(Update update, LongPollingBot bot) {
         long chatId = update.getMessage().getChatId();
         String state = stateSource.getState(chatId);
         Optional<MethodTargetPair> methodOptional = mappingMethodContainer.getMappingMethod(state);

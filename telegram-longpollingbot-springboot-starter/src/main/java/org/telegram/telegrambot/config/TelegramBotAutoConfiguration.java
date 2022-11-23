@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProcessor;
-import org.telegram.telegrambot.bot.DispatchedTelegramLongPollingBot;
-import org.telegram.telegrambot.bot.TelegramLongPollingBot;
+import org.telegram.telegrambot.bot.DispatchedLongPollingBot;
+import org.telegram.telegrambot.bot.LongPollingBot;
 import org.telegram.telegrambot.handler.*;
 import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.repository.StateSource;
@@ -65,10 +65,10 @@ public class TelegramBotAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty("telegrambot.token")
-    public TelegramLongPollingBot longPollingBot(@Value("${telegrambot.username}}") String botUsername,
-                                                 @Value("${telegrambot.token}") String botToken,
-                                                 UpdateDispatcher updateDispatcher,
-                                                 BotApiMethodExecutorResolver methodExecutorResolver) {
-        return new DispatchedTelegramLongPollingBot(botUsername, botToken, updateDispatcher, methodExecutorResolver);
+    public LongPollingBot longPollingBot(@Value("${telegrambot.username}}") String botUsername,
+                                         @Value("${telegrambot.token}") String botToken,
+                                         UpdateDispatcher updateDispatcher,
+                                         BotApiMethodExecutorResolver methodExecutorResolver) {
+        return new DispatchedLongPollingBot(botUsername, botToken, updateDispatcher, methodExecutorResolver);
     }
 }
