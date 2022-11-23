@@ -1,7 +1,22 @@
 {
   "properties": [
     {
+      "name": "telegrambot.username",
+      "type": "java.lang.String",
+      "description": "Bot username."
+    },
+    {
+      "name": "telegrambot.token",
+      "type": "java.lang.String",
+      "description": "Bot token."
+    },
+    {
       "name": "telegrambot.exception.default-message",
+      "type": "java.lang.String",
+      "description": "Default message that bot will send if unhandled exception caught."
+    },
+    {
+      "name": "telegrambot.statesource.initial-state",
       "type": "java.lang.String",
       "description": "Initial state when user text bot for the first time."
     }
