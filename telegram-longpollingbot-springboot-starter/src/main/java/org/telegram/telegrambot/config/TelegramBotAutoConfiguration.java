@@ -10,8 +10,6 @@ import org.telegram.telegrambot.bot.UpdateDispatcherTelegramLongPollingBot;
 import org.telegram.telegrambot.handler.*;
 import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.repository.StateSource;
-import org.telegram.telegrambot.validator.LongPollingBotUpdateMappingMethodSignatureValidator;
-import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -40,14 +38,8 @@ public class TelegramBotAutoConfiguration {
     }
 
     @Bean
-    public UpdateMappingMethodSignatureValidator updateMappingMethodSignatureValidator() {
-        return new LongPollingBotUpdateMappingMethodSignatureValidator();
-    }
-
-    @Bean
-    public UpdateHandlerAnnotationBeanPostProcessor updateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodInvokerContainer,
-                                                                                             UpdateMappingMethodSignatureValidator methodSignatureValidator) {
-        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer, methodSignatureValidator);
+    public UpdateHandlerAnnotationBeanPostProcessor updateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodInvokerContainer) {
+        return new UpdateHandlerAnnotationBeanPostProcessor(methodInvokerContainer);
     }
 
     @Bean

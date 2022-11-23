@@ -14,11 +14,10 @@ import java.util.Optional;
 public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final ExceptionMappingMethodContainer methodContainer;
-    private final ExceptionMappingMethodSignatureValidator methodSignatureValidator;
+    private final ExceptionMappingMethodSignatureValidator methodSignatureValidator = new ExceptionMappingMethodSignatureValidator();
 
-    public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer, ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
+    public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer) {
         this.methodContainer = methodContainer;
-        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
@@ -52,7 +51,8 @@ public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProc
                 Method storedMethod = storedExceptionMapping.getMethod();
                 Object storedTarget = storedExceptionMapping.getTarget();
                 String message = String.format("Found duplicate method annotated as @ExceptionMapping with same exception: " +
-                        "%s in class %s and %s in class %s", storedMethod, storedTarget, method, bean.getClass());
+                        "%s in class %s and %s in class %s", storedMethod.getName(), storedTarget.getClass().getName(),
+                        method.getName(), bean.getClass().getName());
                 throw new IllegalStateException(message);
             }
         } else {

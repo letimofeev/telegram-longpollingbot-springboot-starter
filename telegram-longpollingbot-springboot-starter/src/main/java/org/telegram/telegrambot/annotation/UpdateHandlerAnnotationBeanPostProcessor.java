@@ -13,11 +13,10 @@ import java.util.Optional;
 public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final UpdateMappingMethodContainer methodContainer;
-    private final UpdateMappingMethodSignatureValidator methodSignatureValidator;
+    private final UpdateMappingMethodSignatureValidator methodSignatureValidator = new UpdateMappingMethodSignatureValidator();
 
-    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
+    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer) {
         this.methodContainer = methodContainer;
-        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
             Object storedTarget = mappingMethodOptional.get().getTarget();
             String message = String.format("Found duplicate method annotated as @UpdateMapping with same state: " +
                     "%s in class %s and %s in class %s",
-                    storedMethod, storedTarget.getClass(), method, bean.getClass());
+                    storedMethod.getName(), storedTarget.getClass().getName(), method.getName(), bean.getClass().getName());
             throw new IllegalStateException(message);
         }
     }

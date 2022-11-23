@@ -8,22 +8,14 @@ import org.telegram.telegrambot.annotation.ExceptionHandlerAnnotationBeanPostPro
 import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.model.ExceptionMappingMethodContainer;
-import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
-import org.telegram.telegrambot.validator.LongBollingBotExceptionMappingMethodSignatureValidator;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 @Configuration
 public class ExceptionHandlerConfiguration {
 
     @Bean
-    public ExceptionMappingMethodSignatureValidator exceptionMappingMethodSignatureValidator() {
-        return new LongBollingBotExceptionMappingMethodSignatureValidator();
-    }
-
-    @Bean
-    public ExceptionHandlerAnnotationBeanPostProcessor exceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer,
-                                                                                                   ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
-        return new ExceptionHandlerAnnotationBeanPostProcessor(methodContainer, methodSignatureValidator);
+    public ExceptionHandlerAnnotationBeanPostProcessor exceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer) {
+        return new ExceptionHandlerAnnotationBeanPostProcessor(methodContainer);
     }
 
     @Bean
