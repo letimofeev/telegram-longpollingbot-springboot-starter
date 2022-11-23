@@ -11,12 +11,12 @@ import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidat
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class ExceptionMappingAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final ExceptionMappingMethodContainer methodContainer;
     private final ExceptionMappingMethodSignatureValidator methodSignatureValidator;
 
-    public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer, ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
+    public ExceptionMappingAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer, ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }

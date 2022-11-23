@@ -10,12 +10,12 @@ import org.telegram.telegrambot.model.UpdateMappingMethodContainer;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class UpdateMappingAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final UpdateMappingMethodContainer methodContainer;
     private final UpdateMappingMethodSignatureValidator methodSignatureValidator;
 
-    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
+    public UpdateMappingAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }
