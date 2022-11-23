@@ -15,7 +15,7 @@ public class LongPollingBotUpdateMappingMethodInvoker implements UpdateMappingMe
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<PartialBotApiMethod<Message>> invokeUpdateMappingMethod(Update update, MethodTargetPair mappingMethod) {
+    public List<? extends PartialBotApiMethod<Message>> invokeUpdateMappingMethod(Update update, MethodTargetPair mappingMethod) {
         Method method = mappingMethod.getMethod();
         Object handler = mappingMethod.getTarget();
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);

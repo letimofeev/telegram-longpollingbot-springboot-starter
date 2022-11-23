@@ -50,10 +50,10 @@ public class TelegramBotAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UpdateDispatcher updateDispatcher(StateSource stateSource,
-                                             UpdateMappingMethodContainer mappingMethodContainer,
-                                             UpdateMappingMethodInvoker methodInvoker) {
-        return new LongPollingBotUpdateDispatcher(stateSource, mappingMethodContainer, methodInvoker);
+    public UpdateResolver updateDispatcher(StateSource stateSource,
+                                           UpdateMappingMethodContainer mappingMethodContainer,
+                                           UpdateMappingMethodInvoker methodInvoker) {
+        return new LongPollingBotUpdateResolver(stateSource, mappingMethodContainer, methodInvoker);
     }
 
     @Bean
@@ -67,8 +67,8 @@ public class TelegramBotAutoConfiguration {
     @ConditionalOnProperty("telegrambot.token")
     public LongPollingBot longPollingBot(@Value("${telegrambot.username}}") String botUsername,
                                          @Value("${telegrambot.token}") String botToken,
-                                         UpdateDispatcher updateDispatcher,
+                                         UpdateResolver updateResolver,
                                          BotApiMethodExecutorResolver methodExecutorResolver) {
-        return new DispatchedLongPollingBot(botUsername, botToken, updateDispatcher, methodExecutorResolver);
+        return new DispatchedLongPollingBot(botUsername, botToken, updateResolver, methodExecutorResolver);
     }
 }

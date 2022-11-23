@@ -2,7 +2,7 @@ package org.telegram.telegrambot.bot;
 
 import org.springframework.util.ReflectionUtils;
 import org.telegram.telegrambot.handler.BotApiMethodExecutorResolver;
-import org.telegram.telegrambot.handler.UpdateDispatcher;
+import org.telegram.telegrambot.handler.UpdateResolver;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,13 +14,13 @@ public class DispatchedLongPollingBot extends LongPollingBot {
 
     private final String botUsername;
     private final String botToken;
-    private final UpdateDispatcher updateDispatcher;
+    private final UpdateResolver updateResolver;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
 
-    public DispatchedLongPollingBot(String botUsername, String botToken, UpdateDispatcher updateDispatcher, BotApiMethodExecutorResolver methodExecutorResolver) {
+    public DispatchedLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver, BotApiMethodExecutorResolver methodExecutorResolver) {
         this.botUsername = botUsername;
         this.botToken = botToken;
-        this.updateDispatcher = updateDispatcher;
+        this.updateResolver = updateResolver;
         this.methodExecutorResolver = methodExecutorResolver;
     }
 
@@ -36,7 +36,8 @@ public class DispatchedLongPollingBot extends LongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        updateDispatcher.executeHandlerOnUpdate(update, this);
+        List<? extends PartialBotApiMethod<Message>> apiMethods = updateResolver.getResponse(update);
+        executeAllApiMethods(apiMethods);
     }
 
     @Override

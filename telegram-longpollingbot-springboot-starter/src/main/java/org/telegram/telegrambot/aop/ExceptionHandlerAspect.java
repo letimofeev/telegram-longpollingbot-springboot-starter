@@ -28,7 +28,7 @@ public class ExceptionHandlerAspect {
         this.exceptionMappingMethodInvoker = exceptionMappingMethodInvoker;
     }
 
-    @Around("execution(public void org.telegram.telegrambot.handler.UpdateDispatcher.executeHandlerOnUpdate(..))")
+    @Around("execution(public void org.telegram.telegrambot.handler.UpdateResolver.getResponse(..))")
     public Object aroundExecuteHandlerOnUpdate(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             return joinPoint.proceed();
