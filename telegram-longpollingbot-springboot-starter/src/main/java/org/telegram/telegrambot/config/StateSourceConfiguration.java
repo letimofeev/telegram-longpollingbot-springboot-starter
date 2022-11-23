@@ -12,7 +12,7 @@ public class StateSourceConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public StateSource stateSource(@Value("telegrambot.initial-state:") String initialState) {
+    public StateSource stateSource(@Value("${telegrambot.initial-state:}") String initialState) {
         return new DefaultStateSource(initialState);
     }
 }
