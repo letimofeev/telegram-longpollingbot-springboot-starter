@@ -38,7 +38,7 @@ public class LongPollingBotUpdateDispatcher implements UpdateDispatcher {
             throw new NoUpdateHandlerFoundException("No handlers found for state: " + state);
         }
         MethodTargetPair mappingMethod = methodOptional.get();
-        List<PartialBotApiMethod<Message>> apiMethods = methodInvoker.invokeHandlerMappingMethod(update, mappingMethod);
+        List<PartialBotApiMethod<Message>> apiMethods = methodInvoker.invokeUpdateMappingMethod(update, mappingMethod);
         executeAllApiMethods(apiMethods, bot);
     }
 

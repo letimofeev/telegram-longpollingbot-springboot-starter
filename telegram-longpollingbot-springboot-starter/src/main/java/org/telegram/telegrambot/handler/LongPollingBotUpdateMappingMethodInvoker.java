@@ -15,11 +15,11 @@ public class LongPollingBotUpdateMappingMethodInvoker implements UpdateMappingMe
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<PartialBotApiMethod<Message>> invokeHandlerMappingMethod(Update update, MethodTargetPair mappingMethod) {
+    public List<PartialBotApiMethod<Message>> invokeUpdateMappingMethod(Update update, MethodTargetPair mappingMethod) {
         Method method = mappingMethod.getMethod();
         Object handler = mappingMethod.getTarget();
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, update);
-        Objects.requireNonNull(apiMethods, String.format("@HandlerMapping method %s returned null", method));
+        Objects.requireNonNull(apiMethods, String.format("@UpdateMapping method %s returned null", method));
         if (apiMethods instanceof Collection) {
             validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);

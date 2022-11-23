@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 import static org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods;
 
-public class LongPollingBotExecuteBotApiMethodResolver implements BotApiMethodExecutorResolver {
+public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExecutorResolver {
 
     private static final String TARGET_METHOD_NAME = "execute";
     private static final int REQUIRED_PARAMETERS_NUMBER = 1;

@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface UpdateMappingMethodInvoker {
 
-    List<PartialBotApiMethod<Message>> invokeHandlerMappingMethod(Update update, MethodTargetPair mappingMethod);
+    List<PartialBotApiMethod<Message>> invokeUpdateMappingMethod(Update update, MethodTargetPair mappingMethod);
 }

@@ -18,12 +18,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import java.util.List;
 
 @Configuration
-@ConditionalOnProperty(
-        prefix = "telegrambot",
-        name = {"enabled"},
-        havingValue = "true",
-        matchIfMissing = true
-)
 public class TelegramBotAutoConfiguration {
 
     @Bean
@@ -45,7 +39,7 @@ public class TelegramBotAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public BotApiMethodExecutorResolver executeMethodResolver() {
-        return new LongPollingBotExecuteBotApiMethodResolver();
+        return new LongPollingBotApiMethodExecutorResolver();
     }
 
     @Bean
