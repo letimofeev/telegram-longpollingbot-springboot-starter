@@ -29,11 +29,12 @@ public class ExceptionHandlerAspect {
         try {
             return joinPoint.proceed();
         } catch (Exception e) {
-            return handleException(joinPoint, e);
+            handleException(joinPoint, e);
         }
+        return null;
     }
 
-    private Object handleException(ProceedingJoinPoint joinPoint, Exception e) throws Exception {
+    private void handleException(ProceedingJoinPoint joinPoint, Exception e) throws Exception {
         log.warn("Exception during onUpdateReceive() method, nested exception: {}", e.toString());
         Optional<MethodTargetPair> optional = exceptionMappingMethodContainer.getExceptionMapping(e.getClass());
         if (optional.isPresent()) {
@@ -43,7 +44,6 @@ public class ExceptionHandlerAspect {
             log.warn("Using ExceptionMapping method: {}", method.toString());
             Update update = (Update) joinPoint.getArgs()[0];
             ReflectionUtils.invokeMethod(method, target, update, e);
-            return null;
         }
         log.warn("No handlers found for exception {}", e.getClass());
         throw e;

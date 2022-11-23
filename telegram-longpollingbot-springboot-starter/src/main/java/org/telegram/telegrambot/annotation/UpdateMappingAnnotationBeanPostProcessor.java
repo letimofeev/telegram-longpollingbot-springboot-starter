@@ -36,17 +36,20 @@ public class UpdateMappingAnnotationBeanPostProcessor implements BeanPostProcess
             if (annotation != null) {
                 methodSignatureValidator.validateMethodSignature(method);
                 String state = annotation.state();
-                validateDuplicates(state, method);
+                validateDuplicates(state, method, bean);
                 methodContainer.putMappingMethod(state, new MethodTargetPair(method, bean));
             }
         }
     }
 
-    private void validateDuplicates(String state, Method method) {
+    private void validateDuplicates(String state, Method method, Object bean) {
         Optional<MethodTargetPair> mappingMethodOptional = methodContainer.getMappingMethod(state);
         if (mappingMethodOptional.isPresent()) {
             Method storedMethod = mappingMethodOptional.get().getMethod();
-            String message = String.format("Found duplicate method annotated as @UpdateMapping with same state: %s and %s", storedMethod, method);
+            Object storedTarget = mappingMethodOptional.get().getTarget();
+            String message = String.format("Found duplicate method annotated as @UpdateMapping with same state: " +
+                    "%s in class %s and method %s in class %s",
+                    storedMethod, storedTarget.getClass(), method, bean.getClass());
             throw new IllegalStateException(message);
         }
     }
