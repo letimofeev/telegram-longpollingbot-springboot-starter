@@ -1,6 +1,7 @@
-package org.telegram.telegrambot.container;
+package org.telegram.telegrambot.container.initializer;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.telegram.telegrambot.container.MethodTargetPairContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.validator.MethodSignatureValidator;
 

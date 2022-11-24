@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.container;
+package org.telegram.telegrambot.container.initializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.UpdateHandler;
 import org.telegram.telegrambot.annotation.UpdateMapping;
+import org.telegram.telegrambot.container.MethodTargetPairContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 
