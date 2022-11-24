@@ -2,7 +2,6 @@ package org.telegram.telegrambot.container;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.ExceptionHandler;
@@ -16,45 +15,44 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class ExceptionMappingMethodContainerInitializer implements InitializingBean {
+public class ExceptionMappingMethodContainerInitializer extends MethodTargetPairContainerInitializer<Class<? extends Exception>> {
 
     @Autowired
     @ExceptionHandler
     private List<Object> handlers;
-    
-    private final ExceptionMappingMethodContainer methodContainer;
-    private final ExceptionMappingMethodSignatureValidator methodSignatureValidator;
 
     private final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
 
     public ExceptionMappingMethodContainerInitializer(ExceptionMappingMethodContainer methodContainer,
                                                       ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
-        this.methodContainer = methodContainer;
-        this.methodSignatureValidator = methodSignatureValidator;
+        super(methodContainer, methodSignatureValidator);
     }
 
     @Override
-    public void afterPropertiesSet() {
-        for (Object handler : handlers) {
-            System.out.println(handler.getClass());
-            collectAllHandlerMappings(handler);
-        }
-    }
-
-    private void collectAllHandlerMappings(Object handler) {
-        Method[] methods = handler.getClass().getDeclaredMethods();
+    protected void processBean(Object bean) {
+        Method[] methods = bean.getClass().getDeclaredMethods();
         for (Method method : methods) {
             ExceptionMapping annotation = method.getAnnotation(ExceptionMapping.class);
             if (annotation != null) {
                 Class<? extends Exception> exceptionType = annotation.value();
                 methodSignatureValidator.validateMethodSignature(method);
-                validateDuplicates(exceptionType, method, handler);
+                validateDuplicates(exceptionType, method, bean);
             }
         }
     }
 
+    @Override
+    protected List<Object> getBeans() {
+        return handlers;
+    }
+
+    @Override
+    protected void processSavedMethodTargetPair(Class<? extends Exception> key, MethodTargetPair methodTargetPair) {
+        log.info("Mapped exception {} handling onto {}", key, methodTargetPair.getMethod());
+    }
+
     private void validateDuplicates(Class<? extends Exception> exceptionType, Method method, Object bean) {
-        Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.getExactExceptionMapping(exceptionType);
+        Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.getMethodTargetPair(exceptionType);
         if (exceptionMappingOptional.isPresent()) {
             MethodTargetPair storedExceptionMapping = exceptionMappingOptional.get();
             Object storedTarget = exceptionMappingOptional.get().getTarget();
@@ -67,8 +65,7 @@ public class ExceptionMappingMethodContainerInitializer implements InitializingB
                 return;
             }
         }
-        methodContainer.putExceptionMapping(exceptionType, new MethodTargetPair(method, bean));
-        log.info("Mapped exception {} handling onto {}", exceptionType.getName(), method);
+        methodContainer.putMethodTargetPair(exceptionType, new MethodTargetPair(method, bean));
     }
 }
 
