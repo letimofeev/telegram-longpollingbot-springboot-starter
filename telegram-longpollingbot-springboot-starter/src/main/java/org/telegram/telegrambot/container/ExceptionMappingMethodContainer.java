@@ -23,6 +23,11 @@ public class ExceptionMappingMethodContainer {
         return Optional.of(methodTargetPair);
     }
 
+    public Optional<MethodTargetPair> getExactExceptionMapping(Class<? extends Exception> exceptionType) {
+        MethodTargetPair methodTargetPair = exceptionHandlerByExceptionType.get(exceptionType);
+        return Optional.ofNullable(methodTargetPair);
+    }
+
     public void putExceptionMapping(Class<? extends Exception> exceptionType, MethodTargetPair methodTargetPair) {
         exceptionHandlerByExceptionType.put(exceptionType, methodTargetPair);
     }
