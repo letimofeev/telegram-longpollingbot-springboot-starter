@@ -20,7 +20,7 @@ public class ExceptionHandlerAspect {
     private final ExceptionMappingMethodContainer methodContainer;
     private final ApiMethodsReturningMethodInvoker methodInvoker;
 
-    private final Logger log = LoggerFactory.getLogger(ExceptionHandlerAspect.class);
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlerAspect.class);
 
     public ExceptionHandlerAspect(ExceptionMappingMethodContainer methodContainer, ApiMethodsReturningMethodInvoker methodInvoker) {
         this.methodContainer = methodContainer;

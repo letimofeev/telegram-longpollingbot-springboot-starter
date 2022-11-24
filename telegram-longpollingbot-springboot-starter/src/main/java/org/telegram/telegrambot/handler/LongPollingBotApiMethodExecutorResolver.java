@@ -23,7 +23,7 @@ public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExec
     private static final String TARGET_METHOD_NAME = "execute";
     private static final int REQUIRED_PARAMETERS_NUMBER = 1;
 
-    private final Logger log = LoggerFactory.getLogger(LongPollingBotApiMethodExecutorResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(LongPollingBotApiMethodExecutorResolver.class);
 
     @Override
     public Method getApiMethodExecutionMethod(PartialBotApiMethod<Message> apiMethod) {

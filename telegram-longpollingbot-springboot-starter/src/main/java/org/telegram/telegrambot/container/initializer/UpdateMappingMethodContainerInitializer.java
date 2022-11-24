@@ -21,7 +21,7 @@ public class UpdateMappingMethodContainerInitializer extends MethodTargetPairCon
     @UpdateHandler
     private List<Object> handlers;
 
-    private final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
 
     protected UpdateMappingMethodContainerInitializer(MethodTargetPairContainer<String> methodContainer,
                                                       UpdateMappingMethodSignatureValidator methodSignatureValidator) {

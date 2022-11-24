@@ -22,7 +22,7 @@ public class ExceptionMappingMethodContainerInitializer extends MethodTargetPair
     @ExceptionHandler
     private List<Object> handlers;
 
-    private final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
 
     public ExceptionMappingMethodContainerInitializer(ExceptionMappingMethodContainer methodContainer,
                                                       ExceptionMappingMethodSignatureValidator methodSignatureValidator) {

@@ -19,7 +19,7 @@ public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBotExte
     private final UpdateResolver updateResolver;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
 
-    private final Logger log = LoggerFactory.getLogger(DispatchedTelegramLongPollingBot.class);
+    private static final Logger log = LoggerFactory.getLogger(DispatchedTelegramLongPollingBot.class);
 
     public DispatchedTelegramLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver, BotApiMethodExecutorResolver methodExecutorResolver) {
         this.botUsername = botUsername;

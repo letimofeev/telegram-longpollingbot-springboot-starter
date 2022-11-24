@@ -17,7 +17,7 @@ import java.util.Objects;
 @Component
 public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturningMethodInvoker {
 
-    private final Logger log = LoggerFactory.getLogger(ApiMethodsReturningMethodInvokerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ApiMethodsReturningMethodInvokerImpl.class);
 
     @SuppressWarnings("unchecked")
     public List<? extends PartialBotApiMethod<Message>> invokeMethod(MethodTargetPair methodTargetPair, Object... args) {
