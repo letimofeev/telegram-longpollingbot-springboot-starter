@@ -1,5 +1,7 @@
 package org.telegram.telegrambot.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
@@ -15,6 +17,8 @@ import java.util.Optional;
 @Component
 public class LongPollingBotUpdateResolver implements UpdateResolver {
 
+    private static final Logger log = LoggerFactory.getLogger(LongPollingBotUpdateResolver.class);
+
     private final StateSource stateSource;
     private final UpdateMappingMethodContainer mappingMethodContainer;
     private final ApiMethodsReturningMethodInvoker methodInvoker;
@@ -29,6 +33,7 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
     public List<? extends PartialBotApiMethod<Message>> getResponse(Update update) {
         long chatId = update.getMessage().getChatId();
         String state = stateSource.getState(chatId);
+        log.debug("Resolving response for state: \"{}\" and update: {}", state, update);
         Optional<MethodTargetPair> methodOptional = mappingMethodContainer.getUpdateMappingIgnoringCase(state);
         if (methodOptional.isEmpty()) {
             throw new NoUpdateHandlerFoundException("No handlers found for state: " + state);

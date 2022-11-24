@@ -18,11 +18,11 @@ import java.util.Optional;
 @Component
 public class ExceptionMappingMethodContainerInitializer extends MethodTargetPairContainerInitializer<Class<? extends Exception>> {
 
+    private static final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
+
     @Autowired
     @ExceptionHandler
     private List<Object> handlers;
-
-    private static final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
 
     public ExceptionMappingMethodContainerInitializer(ExceptionMappingMethodContainer methodContainer,
                                                       ExceptionMappingMethodSignatureValidator methodSignatureValidator) {

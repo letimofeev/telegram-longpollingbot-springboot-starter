@@ -20,10 +20,10 @@ import static org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods;
 @Component
 public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExecutorResolver {
 
+    private static final Logger log = LoggerFactory.getLogger(LongPollingBotApiMethodExecutorResolver.class);
+
     private static final String TARGET_METHOD_NAME = "execute";
     private static final int REQUIRED_PARAMETERS_NUMBER = 1;
-
-    private static final Logger log = LoggerFactory.getLogger(LongPollingBotApiMethodExecutorResolver.class);
 
     @Override
     public Method getApiMethodExecutionMethod(PartialBotApiMethod<Message> apiMethod) {

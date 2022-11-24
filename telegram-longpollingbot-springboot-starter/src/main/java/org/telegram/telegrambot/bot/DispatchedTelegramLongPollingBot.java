@@ -14,12 +14,12 @@ import java.util.List;
 
 public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBotExtended {
 
+    private static final Logger log = LoggerFactory.getLogger(DispatchedTelegramLongPollingBot.class);
+
     private final String botUsername;
     private final String botToken;
     private final UpdateResolver updateResolver;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
-
-    private static final Logger log = LoggerFactory.getLogger(DispatchedTelegramLongPollingBot.class);
 
     public DispatchedTelegramLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver, BotApiMethodExecutorResolver methodExecutorResolver) {
         this.botUsername = botUsername;

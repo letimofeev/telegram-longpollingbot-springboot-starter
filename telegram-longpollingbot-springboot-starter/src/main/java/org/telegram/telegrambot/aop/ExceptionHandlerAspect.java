@@ -17,10 +17,10 @@ import java.util.Optional;
 @Component
 public class ExceptionHandlerAspect {
 
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlerAspect.class);
+
     private final ExceptionMappingMethodContainer methodContainer;
     private final ApiMethodsReturningMethodInvoker methodInvoker;
-
-    private static final Logger log = LoggerFactory.getLogger(ExceptionHandlerAspect.class);
 
     public ExceptionHandlerAspect(ExceptionMappingMethodContainer methodContainer, ApiMethodsReturningMethodInvoker methodInvoker) {
         this.methodContainer = methodContainer;

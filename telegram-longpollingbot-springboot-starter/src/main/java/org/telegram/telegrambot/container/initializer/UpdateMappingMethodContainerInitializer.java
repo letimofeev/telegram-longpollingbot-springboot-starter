@@ -17,11 +17,11 @@ import java.util.Optional;
 @Component
 public class UpdateMappingMethodContainerInitializer extends MethodTargetPairContainerInitializer<String> {
 
+    private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
+
     @Autowired
     @UpdateHandler
     private List<Object> handlers;
-
-    private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
 
     protected UpdateMappingMethodContainerInitializer(MethodTargetPairContainer<String> methodContainer,
                                                       UpdateMappingMethodSignatureValidator methodSignatureValidator) {
