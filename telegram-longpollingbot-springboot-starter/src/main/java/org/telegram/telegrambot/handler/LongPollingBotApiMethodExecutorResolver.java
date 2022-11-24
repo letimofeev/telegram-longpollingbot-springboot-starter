@@ -1,5 +1,8 @@
 package org.telegram.telegrambot.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.expection.BotApiMethodExecutorResolverException;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -14,13 +17,18 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.stream;
 import static org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods;
 
+@Component
 public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExecutorResolver {
+
+    private static final Logger log = LoggerFactory.getLogger(LongPollingBotApiMethodExecutorResolver.class);
 
     private static final String TARGET_METHOD_NAME = "execute";
     private static final int REQUIRED_PARAMETERS_NUMBER = 1;
 
     @Override
     public Method getApiMethodExecutionMethod(PartialBotApiMethod<Message> apiMethod) {
+        log.debug("Looking for execute() method in TelegramLongPollingBot with argument type: {}",
+                apiMethod.getClass().getName());
         Class<?> requiredParameterType = resolveRequiredParameterType(apiMethod);
         List<Method> methods = stream(getUniqueDeclaredMethods(TelegramLongPollingBot.class))
                 .filter(this::filterByTargetMethodName)
@@ -28,7 +36,9 @@ public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExec
                 .filter(method -> filterByParameterType(method, requiredParameterType))
                 .collect(Collectors.toList());
         checkMethodsNumber(methods, apiMethod);
-        return methods.get(0);
+        Method executeMethod = methods.get(0);
+        log.trace("Found execute() method: {}", executeMethod);
+        return executeMethod;
     }
 
     private boolean filterByTargetMethodName(Method method) {

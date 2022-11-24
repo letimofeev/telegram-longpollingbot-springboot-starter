@@ -1,20 +1,18 @@
 package org.telegram.telegrambot.container;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class UpdateMappingMethodContainer {
+@Component
+public class UpdateMappingMethodContainer extends MethodTargetPairContainer<String> {
 
-    private final Map<String, MethodTargetPair> methodTargetPairByState = new ConcurrentHashMap<>();
-
-    public Optional<MethodTargetPair> getMappingMethod(String state) {
-        return Optional.ofNullable(methodTargetPairByState.get(state.toLowerCase()));
+    public Optional<MethodTargetPair> getUpdateMappingIgnoringCase(String state) {
+        return Optional.ofNullable(methodTargetPairs.get(state.toLowerCase()));
     }
 
-    public void putMappingMethod(String state, MethodTargetPair methodTargetPair) {
-        methodTargetPairByState.put(state.toLowerCase(), methodTargetPair);
+    public void putUpdateMappingIgnoringCase(String state, MethodTargetPair methodTargetPair) {
+        methodTargetPairs.put(state.toLowerCase(), methodTargetPair);
     }
 }

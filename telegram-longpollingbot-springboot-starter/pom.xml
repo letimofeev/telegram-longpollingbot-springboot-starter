@@ -12,14 +12,14 @@
 
     <groupId>org.telegram</groupId>
     <artifactId>telegram-longpollingbot-springboot-starter</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>telegrambot-springboot-starter</name>
 
     <description>telegram-longpollingbot-springboot-starter</description>
 
     <properties>
         <java.version>11</java.version>
-        <telegrambots.version>6.3.0</telegrambots.version>
+        <telegrambot.starter.version>6.3.0</telegrambot.starter.version>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>
 
@@ -30,8 +30,8 @@
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>6.3.0</version>
+            <artifactId>telegrambots-spring-boot-starter</artifactId>
+            <version>${telegrambot.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
