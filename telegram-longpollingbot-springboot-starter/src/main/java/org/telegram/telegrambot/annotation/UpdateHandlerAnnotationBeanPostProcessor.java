@@ -39,13 +39,13 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
                 methodSignatureValidator.validateMethodSignature(method);
                 String state = annotation.state();
                 validateDuplicates(state, method, bean);
-                methodContainer.putMappingMethod(state, new MethodTargetPair(method, bean));
+                methodContainer.putUpdateMapping(state, new MethodTargetPair(method, bean));
             }
         }
     }
 
     private void validateDuplicates(String state, Method method, Object bean) {
-        Optional<MethodTargetPair> mappingMethodOptional = methodContainer.getMappingMethod(state);
+        Optional<MethodTargetPair> mappingMethodOptional = methodContainer.getUpdateMapping(state);
         if (mappingMethodOptional.isPresent()) {
             Method storedMethod = mappingMethodOptional.get().getMethod();
             Object storedTarget = mappingMethodOptional.get().getTarget();
