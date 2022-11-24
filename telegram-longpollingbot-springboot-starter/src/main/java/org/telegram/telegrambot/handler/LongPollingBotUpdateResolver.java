@@ -39,7 +39,7 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
             throw new NoUpdateHandlerFoundException("No handlers found for state: " + state);
         }
         MethodTargetPair mappingMethod = methodOptional.get();
-        log.debug("Found method: {} for state: {}", mappingMethod.getMethod(), state);
+        log.trace("Found method: {} for state: {}", mappingMethod.getMethod(), state);
         return methodInvoker.invokeMethod(mappingMethod, update);
     }
 }

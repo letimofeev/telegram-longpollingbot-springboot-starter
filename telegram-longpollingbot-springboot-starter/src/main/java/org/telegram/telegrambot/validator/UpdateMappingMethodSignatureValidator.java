@@ -30,6 +30,6 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
             String message = String.format("Exception during validating @UpdateMapping method %s, nested exception: %s", method.getName(), e);
             throw new MethodSignatureValidationException(message, e);
         }
-        log.debug("Update handler method {} passed validation", method);
+        log.trace("Update handler method {} passed validation", method);
     }
 }

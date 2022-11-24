@@ -47,9 +47,9 @@ public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBotExte
 
     @Override
     public void executeApiMethod(PartialBotApiMethod<Message> apiMethod) {
-        log.debug("Executing api method: {}", apiMethod);
+        log.trace("Executing api method: {}", apiMethod);
         Method apiMethodExecutor = methodExecutorResolver.getApiMethodExecutionMethod(apiMethod);
-        log.debug("Found execute() method: {}", apiMethodExecutor);
+        log.trace("Found execute() method: {}", apiMethodExecutor);
         ReflectionUtils.invokeMethod(apiMethodExecutor, this, apiMethod);
     }
 

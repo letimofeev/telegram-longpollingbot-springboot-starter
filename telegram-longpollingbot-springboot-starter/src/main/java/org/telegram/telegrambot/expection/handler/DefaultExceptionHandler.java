@@ -21,8 +21,7 @@ public class DefaultExceptionHandler {
 
     @ExceptionMapping
     public SendMessage handleException(Update update, Exception e) {
-        log.warn("Caught exception [{}] by default exception handler", e.getClass());
-        e.printStackTrace();
+        log.warn("Caught exception [{}] by default exception handler", e.getClass().getName());
         long chatId = update.getMessage().getChatId();
         return SendMessage.builder().chatId(chatId).text(message).build();
     }

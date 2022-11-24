@@ -13,7 +13,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
     private static final Logger log = LoggerFactory.getLogger(AbstractMethodSignatureValidator.class);
 
     protected void validateParametersNumber(Method method, int requiredParameterNumber) {
-        log.debug("Validation method {} parameters number, excepted: {}", method, requiredParameterNumber);
+        log.trace("Validation method {} parameters number, excepted: {}", method, requiredParameterNumber);
         Parameter[] parameters = method.getParameters();
         if (parameters.length != requiredParameterNumber) {
             String message = String.format("Method %s must have %d parameters", method.getName(), requiredParameterNumber);
@@ -22,7 +22,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
     }
 
     protected void validateParametersTypes(Method method, Class<?>[] requiredParametersType) {
-        log.debug("Validation method {} parameters types, exception instances of classes: {}",
+        log.trace("Validation method {} parameters types, exception instances of classes: {}",
                 method, Arrays.toString(requiredParametersType));
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < method.getParameterCount(); i++) {
@@ -38,7 +38,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
     }
 
     protected void validateReturnType(Method method, Class<?>[] allowedReturnTypes) {
-        log.debug("Validation method {} parameters number, excepted instance of one of the classes: {}",
+        log.trace("Validation method {} parameters number, excepted instance of one of the classes: {}",
                 method, Arrays.toString(allowedReturnTypes));
         Class<?> returnType = method.getReturnType();
         for (Class<?> allowedReturnType : allowedReturnTypes) {

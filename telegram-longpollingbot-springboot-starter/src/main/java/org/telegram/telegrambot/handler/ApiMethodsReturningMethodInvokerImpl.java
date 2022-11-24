@@ -27,16 +27,16 @@ public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturning
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, args);
         Objects.requireNonNull(apiMethods, String.format("Method supposed to return api methods %s returned null", method));
         if (apiMethods instanceof Collection) {
-            log.debug("Method {} returned collection of api methods", method);
+            log.trace("Method {} returned collection of api methods", method);
             validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
         }
-        log.debug("Method {} returned single api method", method);
+        log.trace("Method {} returned single api method", method);
         return List.of((PartialBotApiMethod<Message>) apiMethods);
     }
 
     private void validateCollection(Collection<?> apiMethods, Method method) {
-        log.debug("Validating collection of api methods returned from: {}", method);
+        log.trace("Validating collection of api methods returned from: {}", method);
         for (Object apiMethod : apiMethods) {
             if (!(apiMethod instanceof PartialBotApiMethod)) {
                 String message = String.format("Unresolved type %s in Collection " +
