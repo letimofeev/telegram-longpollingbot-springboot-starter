@@ -1,5 +1,7 @@
 package org.telegram.telegrambot.annotation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
@@ -17,6 +19,8 @@ public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProc
 
     private final ExceptionMappingMethodContainer methodContainer;
     private final ExceptionMappingMethodSignatureValidator methodSignatureValidator;
+
+    private final Logger log = LoggerFactory.getLogger(ExceptionHandlerAnnotationBeanPostProcessor.class);
 
     public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer, ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
@@ -48,18 +52,16 @@ public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProc
         Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.getExceptionMapping(exceptionType);
         if (exceptionMappingOptional.isPresent()) {
             MethodTargetPair storedExceptionMapping = exceptionMappingOptional.get();
-            if (storedExceptionMapping.getTarget() instanceof DefaultExceptionHandler) {
-                methodContainer.putExceptionMapping(exceptionType, new MethodTargetPair(method, bean));
-            } else if (!(bean instanceof DefaultExceptionHandler)) {
+            if (!(bean instanceof DefaultExceptionHandler)) {
                 Method storedMethod = storedExceptionMapping.getMethod();
                 Object storedTarget = storedExceptionMapping.getTarget();
                 String message = String.format("Found duplicate method annotated as @ExceptionMapping with same exception: " +
-                        "%s in class %s and %s in class %s", storedMethod.getName(), storedTarget.getClass().getName(),
+                                "%s in class %s and %s in class %s", storedMethod.getName(), storedTarget.getClass().getName(),
                         method.getName(), bean.getClass().getName());
                 throw new IllegalStateException(message);
             }
-        } else {
-            methodContainer.putExceptionMapping(exceptionType, new MethodTargetPair(method, bean));
         }
+        methodContainer.putExceptionMapping(exceptionType, new MethodTargetPair(method, bean));
+        log.info("Mapped exception {} handling onto {}", exceptionType, method);
     }
 }
