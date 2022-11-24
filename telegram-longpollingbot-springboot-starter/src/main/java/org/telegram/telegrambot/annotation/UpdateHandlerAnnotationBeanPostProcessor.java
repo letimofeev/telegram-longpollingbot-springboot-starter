@@ -3,6 +3,7 @@ package org.telegram.telegrambot.annotation;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
@@ -10,13 +11,15 @@ import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+@Component
 public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final UpdateMappingMethodContainer methodContainer;
-    private final UpdateMappingMethodSignatureValidator methodSignatureValidator = new UpdateMappingMethodSignatureValidator();
+    private final UpdateMappingMethodSignatureValidator methodSignatureValidator;
 
-    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer) {
+    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer, UpdateMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
+        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override

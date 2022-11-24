@@ -1,5 +1,6 @@
 package org.telegram.telegrambot.handler;
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturningMethodInvoker {
 
     @SuppressWarnings("unchecked")

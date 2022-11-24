@@ -1,5 +1,6 @@
 package org.telegram.telegrambot.expection.handler;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambot.annotation.ExceptionHandler;
 import org.telegram.telegrambot.annotation.ExceptionMapping;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,7 +11,7 @@ public class DefaultExceptionHandler {
 
     private final String message;
 
-    public DefaultExceptionHandler(String message) {
+    public DefaultExceptionHandler(@Value("${telegrambot.exception.default-message:Something went wrong...}") String message) {
         this.message = message;
     }
 

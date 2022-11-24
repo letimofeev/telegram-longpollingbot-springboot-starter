@@ -1,5 +1,6 @@
 package org.telegram.telegrambot.validator;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.expection.MethodSignatureValidationException;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -7,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+@Component
 public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatureValidator {
 
     private static final int REQUIRED_PARAMETERS_NUMBER = 1;

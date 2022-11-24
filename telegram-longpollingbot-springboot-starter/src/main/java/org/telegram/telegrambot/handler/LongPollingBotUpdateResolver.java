@@ -1,5 +1,6 @@
 package org.telegram.telegrambot.handler;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
@@ -11,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class LongPollingBotUpdateResolver implements UpdateResolver {
 
     private final StateSource stateSource;

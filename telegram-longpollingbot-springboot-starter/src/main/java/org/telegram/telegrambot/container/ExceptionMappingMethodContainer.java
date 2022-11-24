@@ -1,11 +1,13 @@
 package org.telegram.telegrambot.container;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class ExceptionMappingMethodContainer {
 
     private final Map<Class<? extends Exception>, MethodTargetPair> exceptionHandlerByExceptionType = new ConcurrentHashMap<>();

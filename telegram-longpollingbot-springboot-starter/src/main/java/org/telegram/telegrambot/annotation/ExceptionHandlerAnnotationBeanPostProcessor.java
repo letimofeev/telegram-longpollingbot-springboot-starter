@@ -3,6 +3,7 @@ package org.telegram.telegrambot.annotation;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
@@ -11,13 +12,15 @@ import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidat
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+@Component
 public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
     private final ExceptionMappingMethodContainer methodContainer;
-    private final ExceptionMappingMethodSignatureValidator methodSignatureValidator = new ExceptionMappingMethodSignatureValidator();
+    private final ExceptionMappingMethodSignatureValidator methodSignatureValidator;
 
-    public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer) {
+    public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer, ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
+        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
