@@ -3,32 +3,27 @@ package org.telegram.telegrambot.container;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class ExceptionMappingMethodContainer {
-
-    private final Map<Class<? extends Exception>, MethodTargetPair> exceptionHandlerByExceptionType = new ConcurrentHashMap<>();
+public class ExceptionMappingMethodContainer extends MethodTargetPairContainer<Class<? extends Exception>> {
 
     public Optional<MethodTargetPair> getExceptionMapping(Class<? extends Exception> exceptionType) {
-        MethodTargetPair methodTargetPair = exceptionHandlerByExceptionType.get(exceptionType);
+        MethodTargetPair methodTargetPair = methodTargetPairs.get(exceptionType);
         if (methodTargetPair == null) {
-            Optional<Class<? extends Exception>> parentType = exceptionHandlerByExceptionType.keySet().stream()
+            Optional<Class<? extends Exception>> parentType = methodTargetPairs.keySet().stream()
                     .filter(currentType -> currentType.isAssignableFrom(exceptionType))
                     .findFirst();
-            return parentType.map(exceptionHandlerByExceptionType::get);
+            return parentType.map(methodTargetPairs::get);
         }
         return Optional.of(methodTargetPair);
     }
 
     public Optional<MethodTargetPair> getExactExceptionMapping(Class<? extends Exception> exceptionType) {
-        MethodTargetPair methodTargetPair = exceptionHandlerByExceptionType.get(exceptionType);
-        return Optional.ofNullable(methodTargetPair);
+        return getMethodTargetPair(exceptionType);
     }
 
     public void putExceptionMapping(Class<? extends Exception> exceptionType, MethodTargetPair methodTargetPair) {
-        exceptionHandlerByExceptionType.put(exceptionType, methodTargetPair);
+        putMethodTargetPair(exceptionType, methodTargetPair);
     }
 }
