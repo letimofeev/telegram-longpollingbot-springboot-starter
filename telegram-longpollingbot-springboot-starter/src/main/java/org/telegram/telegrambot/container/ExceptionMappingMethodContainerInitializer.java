@@ -48,7 +48,7 @@ public class ExceptionMappingMethodContainerInitializer extends MethodTargetPair
 
     @Override
     protected void processSavedMethodTargetPair(Class<? extends Exception> key, MethodTargetPair methodTargetPair) {
-        log.info("Mapped exception {} handling onto {}", key, methodTargetPair.getMethod());
+        log.info("Mapped exception [{}] handling onto {}", key, methodTargetPair.getMethod());
     }
 
     private void validateDuplicates(Class<? extends Exception> exceptionType, Method method, Object bean) {

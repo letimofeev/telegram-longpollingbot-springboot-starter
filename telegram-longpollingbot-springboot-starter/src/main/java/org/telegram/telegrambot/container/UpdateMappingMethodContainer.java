@@ -8,11 +8,11 @@ import java.util.Optional;
 @Component
 public class UpdateMappingMethodContainer extends MethodTargetPairContainer<String> {
 
-    public Optional<MethodTargetPair> getUpdateMapping(String state) {
+    public Optional<MethodTargetPair> getUpdateMappingIgnoringCase(String state) {
         return Optional.ofNullable(methodTargetPairs.get(state.toLowerCase()));
     }
 
-    public void putUpdateMapping(String state, MethodTargetPair methodTargetPair) {
+    public void putUpdateMappingIgnoringCase(String state, MethodTargetPair methodTargetPair) {
         methodTargetPairs.put(state.toLowerCase(), methodTargetPair);
     }
 }

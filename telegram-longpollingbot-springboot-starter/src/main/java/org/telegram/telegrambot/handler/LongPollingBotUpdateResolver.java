@@ -29,7 +29,7 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
     public List<? extends PartialBotApiMethod<Message>> getResponse(Update update) {
         long chatId = update.getMessage().getChatId();
         String state = stateSource.getState(chatId);
-        Optional<MethodTargetPair> methodOptional = mappingMethodContainer.getUpdateMapping(state);
+        Optional<MethodTargetPair> methodOptional = mappingMethodContainer.getUpdateMappingIgnoringCase(state);
         if (methodOptional.isEmpty()) {
             throw new NoUpdateHandlerFoundException("No handlers found for state: " + state);
         }
