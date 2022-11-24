@@ -5,11 +5,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambot.annotation.ExceptionHandlerAnnotationBeanPostProcessor;
 import org.telegram.telegrambot.annotation.UpdateHandlerAnnotationBeanPostProcessor;
+import org.telegram.telegrambot.aop.ExceptionHandlerAspect;
 import org.telegram.telegrambot.bot.DispatchedTelegramLongPollingBot;
 import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
+import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.handler.*;
+import org.telegram.telegrambot.repository.DefaultStateSource;
 import org.telegram.telegrambot.repository.StateSource;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -70,5 +75,35 @@ public class TelegramBotAutoConfiguration {
                                                          UpdateResolver updateResolver,
                                                          BotApiMethodExecutorResolver methodExecutorResolver) {
         return new DispatchedTelegramLongPollingBot(botUsername, botToken, updateResolver, methodExecutorResolver);
+    }
+
+    @Bean
+    public ExceptionHandlerAnnotationBeanPostProcessor exceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer) {
+        return new ExceptionHandlerAnnotationBeanPostProcessor(methodContainer);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultExceptionHandler defaultExceptionHandler(@Value("${telegrambot.exception.default-message:Something went wrong...}") String message) {
+        return new DefaultExceptionHandler(message);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ExceptionMappingMethodContainer exceptionMappingMethodContainer() {
+        return new ExceptionMappingMethodContainer();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ExceptionHandlerAspect exceptionHandlerAspect(ExceptionMappingMethodContainer exceptionMappingMethodContainer,
+                                                         ApiMethodsReturningMethodInvoker exceptionMappingMethodInvoker) {
+        return new ExceptionHandlerAspect(exceptionMappingMethodContainer, exceptionMappingMethodInvoker);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public StateSource stateSource(@Value("${telegrambot.initial-state:}") String initialState) {
+        return new DefaultStateSource(initialState);
     }
 }

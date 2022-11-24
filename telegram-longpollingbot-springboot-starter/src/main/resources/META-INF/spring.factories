@@ -1,4 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.telegram.telegrambot.config.TelegramBotAutoConfiguration,\
-  org.telegram.telegrambot.config.ExceptionHandlerConfiguration,\
-  org.telegram.telegrambot.config.StateSourceConfiguration
+  org.telegram.telegrambot.config.TelegramBotAutoConfiguration
