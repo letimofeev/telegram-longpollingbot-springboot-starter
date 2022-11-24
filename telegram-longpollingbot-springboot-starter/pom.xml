@@ -19,7 +19,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <telegrambots.version>6.3.0</telegrambots.version>
+        <telegrambot.starter.version>6.3.0</telegrambot.starter.version>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
     </properties>
 
@@ -30,8 +30,8 @@
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>6.3.0</version>
+            <artifactId>telegrambots-spring-boot-starter</artifactId>
+            <version>${telegrambot.starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>

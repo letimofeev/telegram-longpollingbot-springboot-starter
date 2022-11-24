@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.telegram.telegrambot.config.TelegramBotAutoConfiguration
+  org.telegram.telegrambot.config.TelegramBotAutoConfiguration,\
+  org.telegram.telegrambots.starter.TelegramBotStarterConfiguration
