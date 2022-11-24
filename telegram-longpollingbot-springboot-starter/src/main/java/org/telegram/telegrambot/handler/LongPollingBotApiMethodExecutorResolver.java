@@ -37,7 +37,7 @@ public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExec
                 .collect(Collectors.toList());
         checkMethodsNumber(methods, apiMethod);
         Method executeMethod = methods.get(0);
-        log.trace("Found method: {}", executeMethod);
+        log.trace("Found execute() method: {}", executeMethod);
         return executeMethod;
     }
 

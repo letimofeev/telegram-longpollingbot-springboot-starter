@@ -11,9 +11,14 @@
       "description": "Bot token."
     },
     {
-      "name": "telegrambot.exception.default-message",
+      "name": "telegrambot.exception.default-handler.message",
       "type": "java.lang.String",
       "description": "Default message that bot will send if unhandled exception caught."
+    },
+    {
+      "name": "telegrambot.exception.default-handler.stacktrace-enabled",
+      "type": "java.lang.Boolean",
+      "description": "Is print stack trace required in default exception handler."
     },
     {
       "name": "telegrambot.statesource.initial-state",
