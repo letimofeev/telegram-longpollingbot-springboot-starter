@@ -1,5 +1,7 @@
 package org.telegram.telegrambot.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.telegram.telegrambot.dto.MethodTargetPair;
@@ -7,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -14,20 +17,26 @@ import java.util.Objects;
 @Component
 public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturningMethodInvoker {
 
+    private final Logger log = LoggerFactory.getLogger(ApiMethodsReturningMethodInvokerImpl.class);
+
     @SuppressWarnings("unchecked")
     public List<? extends PartialBotApiMethod<Message>> invokeMethod(MethodTargetPair methodTargetPair, Object... args) {
         Method method = methodTargetPair.getMethod();
         Object handler = methodTargetPair.getTarget();
+        log.debug("Invoking method: {} with args: {}", method, Arrays.toString(args));
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, args);
         Objects.requireNonNull(apiMethods, String.format("Method supposed to return api methods %s returned null", method));
         if (apiMethods instanceof Collection) {
+            log.debug("Method {} returned collection of api methods", method);
             validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
         }
+        log.debug("Method {} returned single api method", method);
         return List.of((PartialBotApiMethod<Message>) apiMethods);
     }
 
     private void validateCollection(Collection<?> apiMethods, Method method) {
+        log.debug("Validating collection of api methods returned from: {}", method);
         for (Object apiMethod : apiMethods) {
             if (!(apiMethod instanceof PartialBotApiMethod)) {
                 String message = String.format("Unresolved type %s in Collection " +
