@@ -8,7 +8,7 @@ import java.util.Optional;
 @Component
 public class ExceptionMappingMethodContainer extends MethodTargetPairContainer<Class<? extends Exception>> {
 
-    public Optional<MethodTargetPair> getExceptionMapping(Class<? extends Exception> exceptionType) {
+    public Optional<MethodTargetPair> getMappingForExceptionAssignableFrom(Class<? extends Exception> exceptionType) {
         MethodTargetPair methodTargetPair = methodTargetPairs.get(exceptionType);
         if (methodTargetPair == null) {
             Optional<Class<? extends Exception>> parentType = methodTargetPairs.keySet().stream()
@@ -17,13 +17,5 @@ public class ExceptionMappingMethodContainer extends MethodTargetPairContainer<C
             return parentType.map(methodTargetPairs::get);
         }
         return Optional.of(methodTargetPair);
-    }
-
-    public Optional<MethodTargetPair> getExactExceptionMapping(Class<? extends Exception> exceptionType) {
-        return getMethodTargetPair(exceptionType);
-    }
-
-    public void putExceptionMapping(Class<? extends Exception> exceptionType, MethodTargetPair methodTargetPair) {
-        putMethodTargetPair(exceptionType, methodTargetPair);
     }
 }

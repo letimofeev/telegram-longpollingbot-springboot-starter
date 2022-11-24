@@ -17,15 +17,14 @@ import java.util.Optional;
 @Component
 public class ExceptionHandlerAspect {
 
-    private final ExceptionMappingMethodContainer exceptionMappingMethodContainer;
-    private final ApiMethodsReturningMethodInvoker exceptionMappingMethodInvoker;
+    private final ExceptionMappingMethodContainer methodContainer;
+    private final ApiMethodsReturningMethodInvoker methodInvoker;
 
     private final Logger log = LoggerFactory.getLogger(ExceptionHandlerAspect.class);
 
-    public ExceptionHandlerAspect(ExceptionMappingMethodContainer exceptionMappingMethodContainer,
-                                  ApiMethodsReturningMethodInvoker exceptionMappingMethodInvoker) {
-        this.exceptionMappingMethodContainer = exceptionMappingMethodContainer;
-        this.exceptionMappingMethodInvoker = exceptionMappingMethodInvoker;
+    public ExceptionHandlerAspect(ExceptionMappingMethodContainer methodContainer, ApiMethodsReturningMethodInvoker methodInvoker) {
+        this.methodContainer = methodContainer;
+        this.methodInvoker = methodInvoker;
     }
 
     @Around("execution(public * org.telegram.telegrambot.handler.UpdateResolver.getResponse(..))")
@@ -39,13 +38,13 @@ public class ExceptionHandlerAspect {
 
     private Object handleException(ProceedingJoinPoint joinPoint, Exception e) throws Exception {
         log.warn("Exception during getResponse() method, nested exception: {}", e.toString());
-        Optional<MethodTargetPair> optional = exceptionMappingMethodContainer.getExceptionMapping(e.getClass());
+        Optional<MethodTargetPair> optional = methodContainer.getMappingForExceptionAssignableFrom(e.getClass());
         if (optional.isPresent()) {
             MethodTargetPair methodTargetPair = optional.get();
             Update update = (Update) joinPoint.getArgs()[0];
             log.warn("Using ExceptionMapping method: {} of class {}", methodTargetPair.getMethod().toString(),
                     methodTargetPair.getTarget().getClass().toString());
-            return exceptionMappingMethodInvoker.invokeMethod(methodTargetPair, update, e);
+            return methodInvoker.invokeMethod(methodTargetPair, update, e);
         } else {
             log.error("No handlers found for exception {}", e.getClass());
             throw e;
