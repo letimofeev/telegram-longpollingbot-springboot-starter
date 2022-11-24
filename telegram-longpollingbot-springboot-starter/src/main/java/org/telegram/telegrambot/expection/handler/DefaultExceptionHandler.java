@@ -2,10 +2,8 @@ package org.telegram.telegrambot.expection.handler;
 
 import org.telegram.telegrambot.annotation.ExceptionHandler;
 import org.telegram.telegrambot.annotation.ExceptionMapping;
-import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @ExceptionHandler
 public class DefaultExceptionHandler {
