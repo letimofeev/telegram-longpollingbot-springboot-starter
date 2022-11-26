@@ -6,16 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.UpdateHandler;
 import org.telegram.telegrambot.annotation.UpdateMapping;
-import org.telegram.telegrambot.container.MethodTargetPairContainer;
+import org.telegram.telegrambot.container.AbstractContainer;
+import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Component
-public class UpdateMappingMethodContainerInitializer extends MethodTargetPairContainerInitializer<String> {
+public class UpdateMappingMethodContainerInitializer extends AbstractContainerInitializer<String, List<MethodTargetPair>> {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
 
@@ -23,7 +25,7 @@ public class UpdateMappingMethodContainerInitializer extends MethodTargetPairCon
     @UpdateHandler
     private List<Object> handlers;
 
-    protected UpdateMappingMethodContainerInitializer(MethodTargetPairContainer<String> methodContainer,
+    protected UpdateMappingMethodContainerInitializer(UpdateMappingMethodContainer methodContainer,
                                                       UpdateMappingMethodSignatureValidator methodSignatureValidator) {
         super(methodContainer, methodSignatureValidator);
     }
@@ -35,10 +37,15 @@ public class UpdateMappingMethodContainerInitializer extends MethodTargetPairCon
             UpdateMapping annotation = method.getAnnotation(UpdateMapping.class);
             if (annotation != null) {
                 methodSignatureValidator.validateMethodSignature(method);
-                String state = annotation.state();
-                validateDuplicates(state, method);
-                String stateLowerCase = state.toLowerCase();
-                methodContainer.putMethodTargetPair(stateLowerCase, new MethodTargetPair(method, bean));
+                String state = annotation.state().toLowerCase();
+                String messageRegex = annotation.messageRegex();
+                validateDuplicates(state, messageRegex, method);
+                Optional<List<MethodTargetPair>> optional = methodContainer.get(state);
+                if (optional.isEmpty()) {
+                    methodContainer.put(state, List.of(new MethodTargetPair(method, bean)));
+                } else {
+                    optional.get().add(new MethodTargetPair(method, bean));
+                }
             }
         }
     }
@@ -49,18 +56,29 @@ public class UpdateMappingMethodContainerInitializer extends MethodTargetPairCon
     }
 
     @Override
-    protected void processSavedMethodTargetPair(String key, MethodTargetPair methodTargetPair) {
-        log.info("Mapped state [\"{}\"] onto {}", key, methodTargetPair.getMethod());
+    protected void postProcessSavedObject(String state, List<MethodTargetPair> mappingMethods) {
+        for (MethodTargetPair mappingMethod : mappingMethods) {
+            Method method = mappingMethod.getMethod();
+            String messageRegex = method.getAnnotation(UpdateMapping.class).messageRegex();
+            log.info("Mapped state [\"{}\"] with message regex [\"{}\"] onto {}", messageRegex, state, method);
+        }
     }
 
-    private void validateDuplicates(String state, Method method) {
-        String stateLowerCase = state.toLowerCase();
-        Optional<MethodTargetPair> mappingMethodOptional = methodContainer.getMethodTargetPair(stateLowerCase);
-        if (mappingMethodOptional.isPresent()) {
-            Method storedMethod = mappingMethodOptional.get().getMethod();
-            String message = String.format("Found duplicate method annotated as @UpdateMapping with same state: " +
-                    "%s and %s", storedMethod, method.getName());
-            throw new IllegalStateException(message);
+    private void validateDuplicates(String state, String messageRegex, Method method) {
+        Optional<List<MethodTargetPair>> mappingMethodOptional = methodContainer.get(state);
+        mappingMethodOptional.ifPresent(mappingMethod -> validateDuplicates(messageRegex, method, mappingMethod));
+    }
+
+    private void validateDuplicates(String messageRegex, Method method, List<MethodTargetPair> mappingMethod) {
+        for (MethodTargetPair methodTargetPair : mappingMethod) {
+            Method storedMethod = methodTargetPair.getMethod();
+            UpdateMapping annotation = storedMethod.getAnnotation(UpdateMapping.class);
+            String storedMethodMessageRegex = annotation.messageRegex();
+            if (storedMethodMessageRegex.equals(messageRegex)) {
+                String message = String.format("Found duplicate method annotated as @UpdateMapping with " +
+                        "same state and messageRegex: %s and %s", storedMethod, method.getName());
+                throw new IllegalStateException(message);
+            }
         }
     }
 }

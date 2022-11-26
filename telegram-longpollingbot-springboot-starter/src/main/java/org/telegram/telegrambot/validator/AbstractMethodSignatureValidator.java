@@ -21,17 +21,23 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
         }
     }
 
-    protected void validateParametersTypes(Method method, Class<?>[] requiredParametersType) {
-        log.trace("Validation method {} parameters types, exception instances of classes: {}",
-                method, Arrays.toString(requiredParametersType));
+    protected void validateParametersTypes(Method method, Class<?>[] requiredParametersTypes) {
+        log.trace("Validation method {} parameters types, expected instances of classes: {}",
+                method, Arrays.toString(requiredParametersTypes));
         Parameter[] parameters = method.getParameters();
+        if (method.getParameterCount() != requiredParametersTypes.length) {
+            String message = String.format("Unresolved parameters count for annotated method %s, " +
+                            "expected that parameters are instances of classes: %s",
+                    method.getName(), Arrays.toString(requiredParametersTypes));
+            throw new MethodSignatureValidationException(message);
+        }
         for (int i = 0; i < method.getParameterCount(); i++) {
             Class<?> parameterType = parameters[i].getType();
-            Class<?> requiredParameterType = requiredParametersType[i];
+            Class<?> requiredParameterType = requiredParametersTypes[i];
             if (!requiredParameterType.isAssignableFrom(parameterType)) {
                 String message = String.format("Unresolved parameter for annotated method %s, " +
                                 "expected that parameters are instances of classes: %s",
-                        method.getName(), Arrays.toString(requiredParametersType));
+                        method.getName(), Arrays.toString(requiredParametersTypes));
                 throw new MethodSignatureValidationException(message);
             }
         }

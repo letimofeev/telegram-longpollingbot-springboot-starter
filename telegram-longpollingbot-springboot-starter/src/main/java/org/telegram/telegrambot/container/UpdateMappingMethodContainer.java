@@ -3,16 +3,8 @@ package org.telegram.telegrambot.container;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 
-import java.util.Optional;
+import java.util.List;
 
 @Component
-public class UpdateMappingMethodContainer extends MethodTargetPairContainer<String> {
-
-    public Optional<MethodTargetPair> getUpdateMappingIgnoringCase(String state) {
-        return Optional.ofNullable(methodTargetPairs.get(state.toLowerCase()));
-    }
-
-    public void putUpdateMappingIgnoringCase(String state, MethodTargetPair methodTargetPair) {
-        methodTargetPairs.put(state.toLowerCase(), methodTargetPair);
-    }
+public class UpdateMappingMethodContainer extends AbstractContainer<String, List<MethodTargetPair>> {
 }

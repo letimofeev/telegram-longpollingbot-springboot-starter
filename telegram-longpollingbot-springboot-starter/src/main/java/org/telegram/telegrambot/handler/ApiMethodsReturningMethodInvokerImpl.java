@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
-import org.telegram.telegrambot.dto.MethodTargetPair;
+import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -20,9 +20,10 @@ public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturning
     private static final Logger log = LoggerFactory.getLogger(ApiMethodsReturningMethodInvokerImpl.class);
 
     @SuppressWarnings("unchecked")
-    public List<? extends PartialBotApiMethod<Message>> invokeMethod(MethodTargetPair methodTargetPair, Object... args) {
-        Method method = methodTargetPair.getMethod();
-        Object handler = methodTargetPair.getTarget();
+    public List<? extends PartialBotApiMethod<Message>> invokeMethod(InvocationUnit invocationUnit) {
+        Method method = invocationUnit.getMethod();
+        Object handler = invocationUnit.getTarget();
+        Object[] args = invocationUnit.getArgs();
         log.debug("Invoking method: {} with args: {}", method, Arrays.toString(args));
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, args);
         Objects.requireNonNull(apiMethods, String.format("Method supposed to return api methods %s returned null", method));

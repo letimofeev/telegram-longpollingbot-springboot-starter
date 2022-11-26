@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
+import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.handler.ApiMethodsReturningMethodInvoker;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 @Aspect
@@ -42,9 +44,10 @@ public class ExceptionHandlerAspect {
         if (optional.isPresent()) {
             MethodTargetPair methodTargetPair = optional.get();
             Update update = (Update) joinPoint.getArgs()[0];
-            log.warn("Using ExceptionMapping method: {} of class {}", methodTargetPair.getMethod().toString(),
-                    methodTargetPair.getTarget().getClass().toString());
-            return methodInvoker.invokeMethod(methodTargetPair, update, e);
+            Object[] args = {update, e};
+            log.warn("Using ExceptionMapping method: {} of class {}", methodTargetPair.getMethod(),
+                    methodTargetPair.getTarget().getClass());
+            return methodInvoker.invokeMethod(new InvocationUnit(methodTargetPair, args));
         } else {
             log.error("No handlers found for exception {}", e.getClass());
             throw e;
