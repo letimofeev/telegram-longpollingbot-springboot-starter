@@ -19,7 +19,7 @@ public class DefaultStateSource implements StateSource {
 
     @Override
     public void setState(long chatId, String state) {
-        states.put(chatId, state);
+        states.put(chatId, state.toLowerCase());
     }
 
     @Override
