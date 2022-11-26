@@ -44,16 +44,32 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     private Optional<InvocationUnit> getMessageMatchingMethod(Update update, String state, String message) {
         Optional<List<MethodTargetPair>> optional = mappingMethodContainer.get(state);
         if (optional.isPresent()) {
-            for (MethodTargetPair methodTargetPair : optional.get()) {
+            List<MethodTargetPair> storedMappingMethods = optional.get();
+            for (MethodTargetPair methodTargetPair : storedMappingMethods) {
                 UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
                 String messageRegex = annotation.messageRegex();
-                Pattern pattern = Pattern.compile(messageRegex);
-                Matcher matcher = pattern.matcher(message);
-                if (matcher.find()) {
-                    List<Object> args = getTypedRegexGroups(methodTargetPair.getMethod(), matcher);
-                    args.add(0, update);
-                    return Optional.of(new InvocationUnit(methodTargetPair, args.toArray()));
+                if (!messageRegex.isEmpty()) {
+                    Pattern pattern = Pattern.compile(messageRegex);
+                    Matcher matcher = pattern.matcher(message);
+                    if (matcher.find()) {
+                        List<Object> args = getTypedRegexGroups(methodTargetPair.getMethod(), matcher);
+                        args.add(0, update);
+                        return Optional.of(new InvocationUnit(methodTargetPair, args.toArray()));
+                    }
                 }
+            }
+            return getMappingWithoutRegexMatching(update, storedMappingMethods);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<InvocationUnit> getMappingWithoutRegexMatching(Update update, List<MethodTargetPair> storedMappingMethods) {
+        for (MethodTargetPair methodTargetPair : storedMappingMethods) {
+            UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
+            String messageRegex = annotation.messageRegex();
+            if (messageRegex.isEmpty()) {
+                Object[] args = {update};
+                return Optional.of(new InvocationUnit(methodTargetPair, args));
             }
         }
         return Optional.empty();
