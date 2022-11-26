@@ -81,6 +81,7 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
             RegexGroup annotation = parameter.getAnnotation(RegexGroup.class);
             if (annotation != null) {
                 int groupNumber = annotation.value();
+                validateGroupNumber(groupNumber, matcher);
                 Class<?> parameterType = parameter.getType();
                 String group = matcher.group(groupNumber);
                 Object arg = getTypedRegexGroup(group, parameterType);
@@ -98,6 +99,13 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
         } else {
             throw new IllegalArgumentException("Unsupported annotated parameter type: " +
                     parameterType.getSimpleName());
+        }
+    }
+
+    private void validateGroupNumber(int groupNumber, Matcher matcher) {
+        if (groupNumber > matcher.groupCount()) {
+            String message = String.format("There is no group with number %d", groupNumber);
+            throw new IllegalArgumentException(message);
         }
     }
 }
