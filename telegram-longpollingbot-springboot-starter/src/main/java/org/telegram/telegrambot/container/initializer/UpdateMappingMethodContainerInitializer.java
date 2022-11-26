@@ -42,7 +42,9 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
                 validateDuplicates(state, messageRegex, method);
                 Optional<List<MethodTargetPair>> optional = methodContainer.get(state);
                 if (optional.isEmpty()) {
-                    methodContainer.put(state, List.of(new MethodTargetPair(method, bean)));
+                    ArrayList<MethodTargetPair> methodTargetPairs = new ArrayList<>();
+                    methodTargetPairs.add(new MethodTargetPair(method, bean));
+                    methodContainer.put(state, methodTargetPairs);
                 } else {
                     optional.get().add(new MethodTargetPair(method, bean));
                 }
