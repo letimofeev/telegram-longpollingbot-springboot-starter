@@ -60,7 +60,7 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
         for (MethodTargetPair mappingMethod : mappingMethods) {
             Method method = mappingMethod.getMethod();
             String messageRegex = method.getAnnotation(UpdateMapping.class).messageRegex();
-            log.info("Mapped state [\"{}\"] with message regex [\"{}\"] onto {}", messageRegex, state, method);
+            log.info("Mapped state [\"{}\"] with message regex [\"{}\"] onto {}", state, messageRegex, method);
         }
     }
 
