@@ -1,6 +1,6 @@
 package org.telegram.telegrambot.handler;
 
-import org.telegram.telegrambot.dto.InvocationUnit;
+import org.telegram.telegrambot.model.InvocationUnit;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Optional;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.UpdateHandler;
 import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
-import org.telegram.telegrambot.dto.MethodTargetPair;
+import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.validator.MethodSignatureValidator;
 import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 

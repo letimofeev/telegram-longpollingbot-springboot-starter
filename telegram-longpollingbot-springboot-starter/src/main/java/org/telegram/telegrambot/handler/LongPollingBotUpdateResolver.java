@@ -3,7 +3,7 @@ package org.telegram.telegrambot.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambot.dto.InvocationUnit;
+import org.telegram.telegrambot.model.InvocationUnit;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
