@@ -41,7 +41,7 @@ public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturning
         for (Object apiMethod : apiMethods) {
             if (!(apiMethod instanceof PartialBotApiMethod)) {
                 String message = String.format("Unresolved type %s in Collection " +
-                        "for method %s", apiMethod.getClass(), method);
+                        "for method %s", apiMethod.getClass().getName(), method);
                 throw new IllegalStateException(message);
             }
         }
