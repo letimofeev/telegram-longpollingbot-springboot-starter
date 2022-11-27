@@ -3,6 +3,7 @@ package org.telegram.telegrambot.validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.expection.MethodSignatureValidationException;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -23,7 +24,7 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
     public void validateMethodSignature(Method method) {
         log.debug("Validating update handler method: {}", method);
         try {
-            validateFirstParameterType(method);
+            validateParameters(method);
             validateReturnType(method, ALLOWED_RETURN_TYPES);
         } catch (Exception e) {
             String message = String.format("Exception during validating @UpdateMapping method %s, nested exception: %s", method.getName(), e);
@@ -32,8 +33,23 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
         log.trace("Update handler method {} passed validation", method);
     }
 
-    protected void validateFirstParameterType(Method method) {
-        log.trace("Validation method {} first parameter type, expected instanse of class: {}",
+    private void validateParameters(Method method) {
+        log.trace("Validating method {} parameters", method);
+        validateFirstParameterType(method);
+        for (Parameter parameter : method.getParameters()) {
+            Class<?> parameterType = parameter.getType();
+            if (!Update.class.isAssignableFrom(parameterType)
+                    && !parameter.isAnnotationPresent(RegexGroup.class)) {
+                String message = String.format("Unresolved parameter %s for annotated method %s, " +
+                        "expected that not Update parameter annotated with @RegexGroup", parameter, method);
+                throw new MethodSignatureValidationException(message);
+            }
+        }
+
+    }
+
+    private void validateFirstParameterType(Method method) {
+        log.trace("Validating method {} first parameter type, expected instance of class: {}",
                 method, REQUIRED_FIRST_PARAMETER_TYPE.getName());
         Parameter[] parameters = method.getParameters();
         if (method.getParameterCount() < 1) {
@@ -41,10 +57,11 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
                     "expected at least 1 parameter instance of type: %s", method, Update.class);
             throw new MethodSignatureValidationException(message);
         }
-        Class<?> parameterType = parameters[0].getType();
+        Parameter firstParameter = parameters[0];
+        Class<?> parameterType = firstParameter.getType();
         if (!REQUIRED_FIRST_PARAMETER_TYPE.isAssignableFrom(parameterType)) {
-            String message = String.format("Unresolved parameter for annotated method %s, " +
-                    "expected that first parameter is instance of: %s", method, Update.class);
+            String message = String.format("Unresolved parameter %s for annotated method %s, " +
+                    "expected that first parameter is instance of: %s", firstParameter, method, Update.class);
             throw new MethodSignatureValidationException(message);
         }
     }
