@@ -37,21 +37,7 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
     protected void processBean(Object bean) {
         Method[] methods = bean.getClass().getDeclaredMethods();
         for (Method method : methods) {
-            UpdateMapping annotation = method.getAnnotation(UpdateMapping.class);
-            if (annotation != null) {
-                methodSignatureValidator.validateMethodSignature(method);
-                String state = annotation.state().toLowerCase();
-                String messageRegex = annotation.messageRegex();
-                validateDuplicates(state, messageRegex, method);
-                Optional<List<MethodTargetPair>> optional = methodContainer.get(state);
-                if (optional.isEmpty()) {
-                    ArrayList<MethodTargetPair> methodTargetPairs = new ArrayList<>();
-                    methodTargetPairs.add(new MethodTargetPair(method, bean));
-                    methodContainer.put(state, methodTargetPairs);
-                } else {
-                    optional.get().add(new MethodTargetPair(method, bean));
-                }
-            }
+            processBeanMethod(bean, method);
         }
     }
 
@@ -65,7 +51,19 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
         for (MethodTargetPair mappingMethod : mappingMethods) {
             Method method = mappingMethod.getMethod();
             String messageRegex = method.getAnnotation(UpdateMapping.class).messageRegex();
+
             log.info("Mapped state [\"{}\"] with message regex [\"{}\"] onto {}", state, messageRegex, method);
+        }
+    }
+
+    private void processBeanMethod(Object bean, Method method) {
+        UpdateMapping annotation = method.getAnnotation(UpdateMapping.class);
+        if (annotation != null) {
+            methodSignatureValidator.validateMethodSignature(method);
+            String state = annotation.state().toLowerCase();
+            String messageRegex = annotation.messageRegex();
+            validateDuplicates(state, messageRegex, method);
+            methodContainer.computeIfAbsent(state, key -> new ArrayList<>()).add(new MethodTargetPair(method, bean));
         }
     }
 
@@ -76,14 +74,18 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
 
     private void validateDuplicates(String messageRegex, Method method, List<MethodTargetPair> mappingMethod) {
         for (MethodTargetPair methodTargetPair : mappingMethod) {
-            Method storedMethod = methodTargetPair.getMethod();
-            UpdateMapping annotation = storedMethod.getAnnotation(UpdateMapping.class);
-            String storedMethodMessageRegex = annotation.messageRegex();
+            String storedMethodMessageRegex = getMethodMessageRegex(methodTargetPair);
             if (storedMethodMessageRegex.equals(messageRegex)) {
                 String message = String.format("Found duplicate method annotated as @UpdateMapping with " +
-                        "same state and messageRegex: %s and %s", storedMethod, method.getName());
+                        "same state and messageRegex: %s and %s", methodTargetPair.getMethod(), method.getName());
                 throw new IllegalStateException(message);
             }
         }
+    }
+
+    private String getMethodMessageRegex(MethodTargetPair methodTargetPair) {
+        Method storedMethod = methodTargetPair.getMethod();
+        UpdateMapping annotation = storedMethod.getAnnotation(UpdateMapping.class);
+        return annotation.messageRegex();
     }
 }

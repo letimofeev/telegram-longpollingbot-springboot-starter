@@ -14,7 +14,6 @@ import org.telegram.telegrambot.validator.MethodSignatureValidator;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ExceptionMappingMethodContainerInitializer extends AbstractContainerInitializer<Class<? extends Exception>, MethodTargetPair> {
@@ -37,12 +36,7 @@ public class ExceptionMappingMethodContainerInitializer extends AbstractContaine
     protected void processBean(Object bean) {
         Method[] methods = bean.getClass().getDeclaredMethods();
         for (Method method : methods) {
-            ExceptionMapping annotation = method.getAnnotation(ExceptionMapping.class);
-            if (annotation != null) {
-                Class<? extends Exception> exceptionType = annotation.value();
-                methodSignatureValidator.validateMethodSignature(method);
-                validateDuplicates(exceptionType, method, bean);
-            }
+            processBeanMethod(bean, method);
         }
     }
 
@@ -56,21 +50,38 @@ public class ExceptionMappingMethodContainerInitializer extends AbstractContaine
         log.info("Mapped exception [{}] handling onto {}", key, methodTargetPair.getMethod());
     }
 
-    private void validateDuplicates(Class<? extends Exception> exceptionType, Method method, Object bean) {
-        Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.get(exceptionType);
-        if (exceptionMappingOptional.isPresent()) {
-            MethodTargetPair storedExceptionMapping = exceptionMappingOptional.get();
-            Object storedTarget = exceptionMappingOptional.get().getTarget();
-            if (!(storedTarget instanceof DefaultExceptionHandler) && !(bean instanceof DefaultExceptionHandler)) {
-                Method storedMethod = storedExceptionMapping.getMethod();
-                String message = String.format("Found duplicate method annotated as @ExceptionMapping with same exception %s: " +
-                        "%s and %s", exceptionType.getName(), storedMethod, method);
-                throw new IllegalStateException(message);
-            } else {
-                return;
-            }
+    private void processBeanMethod(Object bean, Method method) {
+        ExceptionMapping annotation = method.getAnnotation(ExceptionMapping.class);
+        if (annotation != null) {
+            Class<? extends Exception> exceptionType = annotation.value();
+            methodSignatureValidator.validateMethodSignature(method);
+            validateDuplicates(exceptionType, method, bean);
+            saveWithDefaultExceptionHandlerOverwriting(bean, method, exceptionType);
         }
-        methodContainer.put(exceptionType, new MethodTargetPair(method, bean));
+    }
+
+    private void validateDuplicates(Class<? extends Exception> exceptionType, Method method, Object bean) {
+        methodContainer.get(exceptionType).ifPresent(exceptionMapping ->
+                checkIfDuplicateNotDefaultExceptionHandler(exceptionType, method, bean, exceptionMapping));
+    }
+
+    private void checkIfDuplicateNotDefaultExceptionHandler(Class<? extends Exception> exceptionType, Method method,
+                                                            Object bean, MethodTargetPair storedExceptionMapping) {
+        Object storedTarget = storedExceptionMapping.getTarget();
+        if (!(storedTarget instanceof DefaultExceptionHandler || bean instanceof DefaultExceptionHandler)) {
+            Method storedMethod = storedExceptionMapping.getMethod();
+            String message = String.format("Found duplicate method annotated as @ExceptionMapping with same exception %s: " +
+                    "%s and %s", exceptionType.getName(), storedMethod, method);
+            throw new IllegalStateException(message);
+        }
+    }
+
+    private void saveWithDefaultExceptionHandlerOverwriting(Object bean, Method method, Class<? extends Exception> exceptionType) {
+        methodContainer.get(exceptionType).ifPresent(exceptionMapping -> {
+            if (exceptionMapping.getTarget() instanceof DefaultExceptionHandler) {
+                methodContainer.put(exceptionType, new MethodTargetPair(method, bean));
+            }
+        });
     }
 }
 

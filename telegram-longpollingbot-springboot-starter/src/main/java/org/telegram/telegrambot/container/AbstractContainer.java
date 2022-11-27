@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public abstract class AbstractContainer<K, V> {
 
@@ -33,5 +34,9 @@ public abstract class AbstractContainer<K, V> {
 
     public boolean containsKey(K key) {
         return container.containsKey(key);
+    }
+
+    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
+        return container.computeIfAbsent(key, mappingFunction);
     }
 }
