@@ -31,7 +31,7 @@ public class ExceptionHandlerAspect {
     }
 
     @Around("execution(public * org.telegram.telegrambot.handler.UpdateResolver.getResponse(..))")
-    public Object aroundOnUpdateReceived(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object aroundGetResponseReceived(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             return joinPoint.proceed();
         } catch (Exception e) {
