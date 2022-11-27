@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.UpdateHandler;
 import org.telegram.telegrambot.annotation.UpdateMapping;
-import org.telegram.telegrambot.container.AbstractContainer;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
+import org.telegram.telegrambot.validator.MethodSignatureValidator;
 import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 
 import java.lang.reflect.Method;
@@ -21,13 +21,16 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
 
     private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
 
+    private final MethodSignatureValidator methodSignatureValidator;
+
     @Autowired
     @UpdateHandler
     private List<Object> handlers;
 
     protected UpdateMappingMethodContainerInitializer(UpdateMappingMethodContainer methodContainer,
                                                       UpdateMappingMethodSignatureValidator methodSignatureValidator) {
-        super(methodContainer, methodSignatureValidator);
+        super(methodContainer);
+        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override

@@ -11,12 +11,9 @@ import java.util.Set;
 public abstract class AbstractContainerInitializer<K, V> implements InitializingBean {
 
     protected final AbstractContainer<K, V> methodContainer;
-    protected final MethodSignatureValidator methodSignatureValidator;
 
-    protected AbstractContainerInitializer(AbstractContainer<K, V> methodContainer,
-                                           MethodSignatureValidator methodSignatureValidator) {
+    protected AbstractContainerInitializer(AbstractContainer<K, V> methodContainer) {
         this.methodContainer = methodContainer;
-        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
@@ -33,9 +30,9 @@ public abstract class AbstractContainerInitializer<K, V> implements Initializing
 
     protected void postProcessSavedObjects() {
         Set<Map.Entry<K, V>> entrySet = methodContainer.getEntrySet();
-        for (Map.Entry<K, V> methodTargetPairEntry : entrySet) {
-            K key = methodTargetPairEntry.getKey();
-            V value = methodTargetPairEntry.getValue();
+        for (Map.Entry<K, V> entry : entrySet) {
+            K key = entry.getKey();
+            V value = entry.getValue();
             postProcessSavedObject(key, value);
         }
     }

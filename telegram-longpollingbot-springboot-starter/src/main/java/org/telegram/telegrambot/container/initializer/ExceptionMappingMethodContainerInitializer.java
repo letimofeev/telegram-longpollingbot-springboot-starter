@@ -10,6 +10,7 @@ import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
+import org.telegram.telegrambot.validator.MethodSignatureValidator;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -20,13 +21,16 @@ public class ExceptionMappingMethodContainerInitializer extends AbstractContaine
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
 
+    private final MethodSignatureValidator methodSignatureValidator;
+
     @Autowired
     @ExceptionHandler
     private List<Object> handlers;
 
     public ExceptionMappingMethodContainerInitializer(ExceptionMappingMethodContainer methodContainer,
                                                       ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
-        super(methodContainer, methodSignatureValidator);
+        super(methodContainer);
+        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
