@@ -11,6 +11,7 @@ import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.databind.StringToObjectMapper;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
+import org.telegram.telegrambot.expection.StringToObjectMapperException;
 import org.telegram.telegrambot.repository.StateSource;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -98,8 +99,14 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
                 validateGroupNumber(groupNumber, matcher);
                 Class<?> parameterType = parameter.getType();
                 String group = matcher.group(groupNumber);
-                Object arg = getTypedRegexGroup(group, parameterType);
-                args.add(arg);
+                try {
+                    Object arg = getTypedRegexGroup(group, parameterType);
+                    args.add(arg);
+                } catch (Exception e) {
+                    String message = String.format("Exception during mapping regex group [\"%s\"] to parameter [%s]; " +
+                            "nested exception: %s", group, parameter, e);
+                    throw new StringToObjectMapperException(message, e);
+                }
             }
         }
         return args;
