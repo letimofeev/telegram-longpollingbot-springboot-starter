@@ -10,15 +10,18 @@ import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
+import org.telegram.telegrambot.validator.MethodSignatureValidator;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
 @Component
-public class ExceptionMappingMethodContainerInitializer extends MethodTargetPairContainerInitializer<Class<? extends Exception>> {
+public class ExceptionMappingMethodContainerInitializer extends AbstractContainerInitializer<Class<? extends Exception>, MethodTargetPair> {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
+
+    private final MethodSignatureValidator methodSignatureValidator;
 
     @Autowired
     @ExceptionHandler
@@ -26,7 +29,8 @@ public class ExceptionMappingMethodContainerInitializer extends MethodTargetPair
 
     public ExceptionMappingMethodContainerInitializer(ExceptionMappingMethodContainer methodContainer,
                                                       ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
-        super(methodContainer, methodSignatureValidator);
+        super(methodContainer);
+        this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
@@ -48,12 +52,12 @@ public class ExceptionMappingMethodContainerInitializer extends MethodTargetPair
     }
 
     @Override
-    protected void processSavedMethodTargetPair(Class<? extends Exception> key, MethodTargetPair methodTargetPair) {
+    protected void postProcessSavedObject(Class<? extends Exception> key, MethodTargetPair methodTargetPair) {
         log.info("Mapped exception [{}] handling onto {}", key, methodTargetPair.getMethod());
     }
 
     private void validateDuplicates(Class<? extends Exception> exceptionType, Method method, Object bean) {
-        Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.getMethodTargetPair(exceptionType);
+        Optional<MethodTargetPair> exceptionMappingOptional = methodContainer.get(exceptionType);
         if (exceptionMappingOptional.isPresent()) {
             MethodTargetPair storedExceptionMapping = exceptionMappingOptional.get();
             Object storedTarget = exceptionMappingOptional.get().getTarget();
@@ -66,7 +70,7 @@ public class ExceptionMappingMethodContainerInitializer extends MethodTargetPair
                 return;
             }
         }
-        methodContainer.putMethodTargetPair(exceptionType, new MethodTargetPair(method, bean));
+        methodContainer.put(exceptionType, new MethodTargetPair(method, bean));
     }
 }
 

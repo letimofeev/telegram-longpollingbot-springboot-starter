@@ -17,7 +17,7 @@ public class DefaultExceptionHandler {
     private final boolean stackTraceEnabled;
 
     public DefaultExceptionHandler(@Value("${telegrambot.exception.default-handler.message:Something went wrong...}") String message,
-                                   @Value("${telegrambot.exception.default-handler.stacktrace-enabled:false}") boolean stackTraceEnabled) {
+                                   @Value("${telegrambot.exception.default-handler.enable-stacktrace:false}") boolean stackTraceEnabled) {
         this.message = message;
         this.stackTraceEnabled = stackTraceEnabled;
     }

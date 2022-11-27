@@ -16,7 +16,7 @@
       "description": "Default message that bot will send if unhandled exception caught."
     },
     {
-      "name": "telegrambot.exception.default-handler.stacktrace-enabled",
+      "name": "telegrambot.exception.default-handler.enable-stacktrace",
       "type": "java.lang.Boolean",
       "description": "Is print stack trace required in default exception handler."
     },

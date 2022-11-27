@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 public @interface UpdateMapping {
 
     String state() default "";
+
+    String messageRegex() default "";
 }
