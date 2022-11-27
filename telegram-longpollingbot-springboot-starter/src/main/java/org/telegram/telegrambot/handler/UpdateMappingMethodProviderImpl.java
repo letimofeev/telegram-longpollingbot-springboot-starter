@@ -8,7 +8,6 @@ import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.container.StringToObjectMapperContainer;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
-import org.telegram.telegrambot.converter.StringToObjectMapper;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.StringToObjectMapperException;
@@ -100,26 +99,30 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     private List<Object> getTypedRegexGroups(Method method, Matcher matcher) {
         List<Object> args = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
-            RegexGroup annotation = parameter.getAnnotation(RegexGroup.class);
-            if (annotation != null) {
-                int groupNumber = annotation.value();
-                validateGroupNumber(groupNumber, matcher);
-                Class<?> parameterType = parameter.getType();
-                String group = matcher.group(groupNumber);
-                try {
-                    Object arg = getTypedRegexGroup(group, parameterType);
-                    args.add(arg);
-                } catch (Exception e) {
-                    String message = String.format("Exception during mapping regex group [\"%s\"] to parameter [%s]; " +
-                            "nested exception: %s", group, parameter, e);
-                    throw new StringToObjectMapperException(message, e);
-                }
-            }
+            addTypedArgumentFromRegexGroup(matcher, args, parameter);
         }
         return args;
     }
 
-    private Object getTypedRegexGroup(String group, Class<?> parameterType) {
+    private void addTypedArgumentFromRegexGroup(Matcher matcher, List<Object> args, Parameter parameter) {
+        RegexGroup annotation = parameter.getAnnotation(RegexGroup.class);
+        if (annotation != null) {
+            int groupNumber = annotation.value();
+            validateGroupNumber(groupNumber, matcher);
+            Class<?> parameterType = parameter.getType();
+            String group = matcher.group(groupNumber);
+            try {
+                Object arg = getTypedArgumentFromRegexGroup(group, parameterType);
+                args.add(arg);
+            } catch (Exception e) {
+                String message = String.format("Exception during mapping regex group [\"%s\"] to parameter [%s]; " +
+                        "nested exception: %s", group, parameter, e);
+                throw new StringToObjectMapperException(message, e);
+            }
+        }
+    }
+
+    private Object getTypedArgumentFromRegexGroup(String group, Class<?> parameterType) {
         parameterType = ClassUtils.resolvePrimitiveIfNecessary(parameterType);
         String parameterName = parameterType.getSimpleName();
         return stringToObjectMapperContainer.get(parameterType)
