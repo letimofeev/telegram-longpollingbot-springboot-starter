@@ -23,6 +23,7 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
     @Override
     public void validateMethodSignature(Method method) {
         log.debug("Validating update handler method: {}", method);
+
         try {
             validateParameters(method);
             validateReturnType(method, ALLOWED_RETURN_TYPES);
@@ -35,11 +36,12 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
 
     private void validateParameters(Method method) {
         log.trace("Validating method {} parameters", method);
+
         validateFirstParameterType(method);
+
         for (Parameter parameter : method.getParameters()) {
             Class<?> parameterType = parameter.getType();
-            if (!Update.class.isAssignableFrom(parameterType)
-                    && !parameter.isAnnotationPresent(RegexGroup.class)) {
+            if (!Update.class.isAssignableFrom(parameterType) && !parameter.isAnnotationPresent(RegexGroup.class)) {
                 String message = String.format("Unresolved parameter %s for annotated method %s, " +
                         "expected that not Update parameter annotated with @RegexGroup", parameter, method);
                 throw new MethodSignatureValidationException(message);
@@ -51,6 +53,7 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
     private void validateFirstParameterType(Method method) {
         log.trace("Validating method {} first parameter type, expected instance of class: {}",
                 method, REQUIRED_FIRST_PARAMETER_TYPE.getName());
+
         Parameter[] parameters = method.getParameters();
         if (method.getParameterCount() < 1) {
             String message = String.format("Unresolved parameters count for annotated method %s, " +

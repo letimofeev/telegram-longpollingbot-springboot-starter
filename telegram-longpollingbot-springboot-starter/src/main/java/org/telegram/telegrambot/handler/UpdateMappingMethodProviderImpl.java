@@ -63,7 +63,6 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
         for (MethodTargetPair methodTargetPair : storedMappingMethods) {
             UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
             String messageRegex = annotation.messageRegex();
-
             if (!messageRegex.isEmpty()) {
                 Optional<InvocationUnit> mappingWithRegexMatching = getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
                 if (mappingWithRegexMatching.isPresent()) {
@@ -78,7 +77,6 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
                                                                  MethodTargetPair methodTargetPair) {
         Pattern pattern = Pattern.compile(messageRegex);
         Matcher matcher = pattern.matcher(message);
-
         if (matcher.find()) {
             List<Object> args = getTypedRegexGroups(methodTargetPair.getMethod(), matcher);
             args.add(0, update);
@@ -91,7 +89,6 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
         for (MethodTargetPair methodTargetPair : storedMappingMethods) {
             UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
             String messageRegex = annotation.messageRegex();
-
             if (messageRegex.isEmpty()) {
                 Object[] args = {update};
                 return Optional.of(new InvocationUnit(methodTargetPair, args));
@@ -104,11 +101,9 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
         List<Object> args = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
             RegexGroup annotation = parameter.getAnnotation(RegexGroup.class);
-
             if (annotation != null) {
                 int groupNumber = annotation.value();
                 validateGroupNumber(groupNumber, matcher);
-
                 Class<?> parameterType = parameter.getType();
                 String group = matcher.group(groupNumber);
                 try {

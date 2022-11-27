@@ -14,6 +14,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
 
     protected void validateParametersNumber(Method method, int requiredParameterNumber) {
         log.trace("Validation method {} parameters number, excepted: {}", method, requiredParameterNumber);
+
         Parameter[] parameters = method.getParameters();
         if (parameters.length != requiredParameterNumber) {
             String message = String.format("Method %s must have %d parameters", method.getName(), requiredParameterNumber);
@@ -24,6 +25,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
     protected void validateParametersTypes(Method method, Class<?>[] requiredParametersTypes) {
         log.trace("Validation method {} parameters types, expected instances of classes: {}",
                 method, Arrays.toString(requiredParametersTypes));
+
         Parameter[] parameters = method.getParameters();
         if (method.getParameterCount() != requiredParametersTypes.length) {
             String message = String.format("Unresolved parameters count for annotated method %s, " +
@@ -34,6 +36,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
         for (int i = 0; i < method.getParameterCount(); i++) {
             Class<?> parameterType = parameters[i].getType();
             Class<?> requiredParameterType = requiredParametersTypes[i];
+
             if (!requiredParameterType.isAssignableFrom(parameterType)) {
                 String message = String.format("Unresolved parameter for annotated method %s, " +
                                 "expected that parameters are instances of classes: %s",
@@ -46,6 +49,7 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
     protected void validateReturnType(Method method, Class<?>[] allowedReturnTypes) {
         log.trace("Validation method {} parameters number, excepted instance of one of the classes: {}",
                 method, Arrays.toString(allowedReturnTypes));
+
         Class<?> returnType = method.getReturnType();
         for (Class<?> allowedReturnType : allowedReturnTypes) {
             if (allowedReturnType.isAssignableFrom(returnType)) {

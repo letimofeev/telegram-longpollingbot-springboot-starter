@@ -33,7 +33,6 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
 
         InvocationUnit mappingMethod = methodProvider.getUpdateMappingMethod(update)
                 .orElseThrow(() -> new NoUpdateHandlerFoundException("No handlers found for update: " + update));
-
         List<? extends PartialBotApiMethod<Message>> botApiMethods = methodInvoker.invokeMethod(mappingMethod);
 
         long chatId = update.getMessage().getChatId();
