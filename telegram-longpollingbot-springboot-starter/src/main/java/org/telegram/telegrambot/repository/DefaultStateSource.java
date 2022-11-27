@@ -13,7 +13,7 @@ public class DefaultStateSource implements StateSource {
 
     private final String initialState;
 
-    public DefaultStateSource(@Value("${telegrambot.initial-state:}") String initialState) {
+    public DefaultStateSource(@Value("${telegrambot.initial-state:initial}") String initialState) {
         this.initialState = initialState;
     }
 

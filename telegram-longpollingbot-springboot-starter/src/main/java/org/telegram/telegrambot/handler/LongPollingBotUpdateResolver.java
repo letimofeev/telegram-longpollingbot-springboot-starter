@@ -19,10 +19,12 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
 
     private final UpdateMappingMethodProvider methodProvider;
     private final ApiMethodsReturningMethodInvoker methodInvoker;
+    private final StateManager stateManager;
 
-    public LongPollingBotUpdateResolver(UpdateMappingMethodProvider methodProvider, ApiMethodsReturningMethodInvoker methodInvoker) {
+    public LongPollingBotUpdateResolver(UpdateMappingMethodProvider methodProvider, ApiMethodsReturningMethodInvoker methodInvoker, StateManager stateManager) {
         this.methodProvider = methodProvider;
         this.methodInvoker = methodInvoker;
+        this.stateManager = stateManager;
     }
 
     @Override
@@ -33,6 +35,9 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
             throw new NoUpdateHandlerFoundException("No handlers found for update: " + update);
         }
         InvocationUnit mappingMethod = methodOptional.get();
-        return methodInvoker.invokeMethod(mappingMethod);
+        List<? extends PartialBotApiMethod<Message>> botApiMethods = methodInvoker.invokeMethod(mappingMethod);
+        long chatId = update.getMessage().getChatId();
+        stateManager.setNewStateIfRequired(chatId, mappingMethod.getMethod());
+        return botApiMethods;
     }
 }
