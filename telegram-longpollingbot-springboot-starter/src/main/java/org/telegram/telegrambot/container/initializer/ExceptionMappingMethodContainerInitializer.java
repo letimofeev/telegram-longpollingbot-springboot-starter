@@ -77,11 +77,12 @@ public class ExceptionMappingMethodContainerInitializer extends AbstractContaine
     }
 
     private void saveWithDefaultExceptionHandlerOverwriting(Object bean, Method method, Class<? extends Exception> exceptionType) {
-        methodContainer.get(exceptionType).ifPresent(exceptionMapping -> {
-            if (exceptionMapping.getTarget() instanceof DefaultExceptionHandler) {
-                methodContainer.put(exceptionType, new MethodTargetPair(method, bean));
+        MethodTargetPair exceptionMapping = new MethodTargetPair(method, bean);
+        methodContainer.get(exceptionType).ifPresentOrElse(storedExceptionMapping -> {
+            if (storedExceptionMapping.getTarget() instanceof DefaultExceptionHandler) {
+                methodContainer.put(exceptionType, exceptionMapping);
             }
-        });
+        }, () -> methodContainer.put(exceptionType, exceptionMapping));
     }
 }
 
