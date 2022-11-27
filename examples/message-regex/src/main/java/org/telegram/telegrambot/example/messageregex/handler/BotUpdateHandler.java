@@ -45,14 +45,4 @@ public class BotUpdateHandler {
                 .text(text)
                 .build();
     }
-
-    @UpdateMapping(state = "three", messageRegex = "a")
-    public SendMessage afterGreeting(Update update, String mem) {
-        long chatId = update.getMessage().getChatId();
-        String text = "Hellow";
-        return SendMessage.builder()
-                .chatId(chatId)
-                .text(text)
-                .build();
-    }
 }

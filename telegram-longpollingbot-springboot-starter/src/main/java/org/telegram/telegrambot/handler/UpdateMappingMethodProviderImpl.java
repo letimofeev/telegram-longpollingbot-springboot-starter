@@ -49,16 +49,22 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
                 UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
                 String messageRegex = annotation.messageRegex();
                 if (!messageRegex.isEmpty()) {
-                    Pattern pattern = Pattern.compile(messageRegex);
-                    Matcher matcher = pattern.matcher(message);
-                    if (matcher.find()) {
-                        List<Object> args = getTypedRegexGroups(methodTargetPair.getMethod(), matcher);
-                        args.add(0, update);
-                        return Optional.of(new InvocationUnit(methodTargetPair, args.toArray()));
-                    }
+                    return getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
                 }
             }
             return getMappingWithoutRegexMatching(update, storedMappingMethods);
+        }
+        return Optional.empty();
+    }
+
+    private Optional<InvocationUnit> getMappingWithRegexMatching(Update update, String message, String messageRegex,
+                                                                 MethodTargetPair methodTargetPair) {
+        Pattern pattern = Pattern.compile(messageRegex);
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            List<Object> args = getTypedRegexGroups(methodTargetPair.getMethod(), matcher);
+            args.add(0, update);
+            return Optional.of(new InvocationUnit(methodTargetPair, args.toArray()));
         }
         return Optional.empty();
     }
