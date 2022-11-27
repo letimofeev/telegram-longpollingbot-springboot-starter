@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
@@ -29,6 +30,7 @@ public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExec
     public Method getApiMethodExecutionMethod(PartialBotApiMethod<Message> apiMethod) {
         log.debug("Looking for execute() method in TelegramLongPollingBot with argument type: {}",
                 apiMethod.getClass().getName());
+
         Class<?> requiredParameterType = resolveRequiredParameterType(apiMethod);
         List<Method> methods = stream(getUniqueDeclaredMethods(TelegramLongPollingBot.class))
                 .filter(this::filterByTargetMethodName)
@@ -37,6 +39,7 @@ public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExec
                 .collect(Collectors.toList());
         checkMethodsNumber(methods, apiMethod);
         Method executeMethod = methods.get(0);
+
         log.trace("Found execute() method: {}", executeMethod);
         return executeMethod;
     }
@@ -65,11 +68,12 @@ public class LongPollingBotApiMethodExecutorResolver implements BotApiMethodExec
     }
 
     private void checkMethodsNumber(List<Method> methods, PartialBotApiMethod<Message> apiMethod) {
+        Class<? extends PartialBotApiMethod> apiMethodClass = apiMethod.getClass();
         if (methods.isEmpty()) {
-            String message = String.format("No executors found for api method: %s", apiMethod.getClass());
+            String message = String.format("No executors found for api method: %s", apiMethodClass);
             throw new BotApiMethodExecutorResolverException(message);
         } else if (methods.size() > 1) {
-            String message = String.format("Found more than one executors: %s for api method: %s", methods, apiMethod.getClass());
+            String message = String.format("Found more than one execute methods: %s for api method: %s", methods, apiMethodClass.getName());
             throw new BotApiMethodExecutorResolverException(message);
         }
     }
