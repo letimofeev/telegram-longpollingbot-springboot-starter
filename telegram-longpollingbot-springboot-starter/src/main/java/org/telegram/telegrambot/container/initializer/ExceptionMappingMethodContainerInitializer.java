@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.ExceptionHandler;
 import org.telegram.telegrambot.annotation.ExceptionMapping;
 import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
-import org.telegram.telegrambot.model.MethodTargetPair;
+import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
 import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
 import org.telegram.telegrambot.validator.MethodSignatureValidator;

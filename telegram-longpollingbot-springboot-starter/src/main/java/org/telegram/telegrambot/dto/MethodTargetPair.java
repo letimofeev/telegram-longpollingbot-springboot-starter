@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.model;
+package org.telegram.telegrambot.dto;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
