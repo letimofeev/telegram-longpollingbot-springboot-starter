@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.telegram.telegrambot.annotation.ConditionalOnBotProperties;
 import org.telegram.telegrambot.bot.DispatchedTelegramLongPollingBot;
 import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
@@ -14,6 +15,7 @@ import org.telegram.telegrambot.handler.UpdateResolver;
 import org.telegram.telegrambots.starter.TelegramBotStarterConfiguration;
 
 @Configuration
+@Import(StateSourceConfiguration.class)
 @ComponentScan("org.telegram.telegrambot")
 @AutoConfigureAfter(TelegramBotStarterConfiguration.class)
 public class TelegramBotAutoConfiguration {
