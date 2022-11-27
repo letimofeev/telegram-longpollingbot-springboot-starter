@@ -5,7 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.annotation.UpdateMapping;
+import org.telegram.telegrambot.container.StringToObjectMapperContainer;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
+import org.telegram.telegrambot.databind.StringToObjectMapper;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.repository.StateSource;
@@ -26,10 +28,12 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
 
     private final StateSource stateSource;
     private final UpdateMappingMethodContainer mappingMethodContainer;
+    private final StringToObjectMapperContainer mapperContainer;
 
-    public UpdateMappingMethodProviderImpl(StateSource stateSource, UpdateMappingMethodContainer mappingMethodContainer) {
+    public UpdateMappingMethodProviderImpl(StateSource stateSource, UpdateMappingMethodContainer mappingMethodContainer, StringToObjectMapperContainer mapperContainer) {
         this.stateSource = stateSource;
         this.mappingMethodContainer = mappingMethodContainer;
+        this.mapperContainer = mapperContainer;
     }
 
     @Override
@@ -49,7 +53,10 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
                 UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
                 String messageRegex = annotation.messageRegex();
                 if (!messageRegex.isEmpty()) {
-                    return getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
+                    Optional<InvocationUnit> mappingWithRegexMatching = getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
+                    if (mappingWithRegexMatching.isPresent()) {
+                        return mappingWithRegexMatching;
+                    }
                 }
             }
             return getMappingWithoutRegexMatching(update, storedMappingMethods);
@@ -98,13 +105,14 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     }
 
     private Object getTypedRegexGroup(String group, Class<?> parameterType) {
-        if (parameterType == int.class) {
-            return Integer.parseInt(group);
-        } else if (parameterType == String.class) {
-            return group;
+        Optional<StringToObjectMapper<?>> stringToObjectMapper = mapperContainer.get(parameterType);
+        if (stringToObjectMapper.isPresent()) {
+            return stringToObjectMapper.get().mapToObject(group);
         } else {
-            throw new IllegalArgumentException("Unsupported annotated parameter type: " +
+            String message = String.format("Unsupported annotated as @RegexGroup parameter type: %s. You should " +
+                            "implement StringToObjectMapper with this parameter type to add parameter support",
                     parameterType.getSimpleName());
+            throw new IllegalArgumentException(message);
         }
     }
 
