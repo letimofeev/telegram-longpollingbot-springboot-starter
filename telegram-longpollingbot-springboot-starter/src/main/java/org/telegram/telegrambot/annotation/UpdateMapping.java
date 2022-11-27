@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UpdateMapping {
 
-    String state() default "";
+    String state() default "initial";
 
     String messageRegex() default "";
+
+    String newState() default "";
 }
