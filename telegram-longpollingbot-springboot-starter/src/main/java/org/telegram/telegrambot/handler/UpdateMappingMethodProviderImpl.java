@@ -110,7 +110,8 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
             return stringToObjectMapper.get().mapToObject(group);
         } else {
             String message = String.format("Unsupported annotated as @RegexGroup parameter type: %s. You should " +
-                            "implement StringToObjectMapper with this parameter type to add parameter support",
+                            "implement StringToObjectMapper with this parameter type and add it to spring context via " +
+                            "@Component, @Bean or any other way",
                     parameterType.getSimpleName());
             throw new IllegalArgumentException(message);
         }
