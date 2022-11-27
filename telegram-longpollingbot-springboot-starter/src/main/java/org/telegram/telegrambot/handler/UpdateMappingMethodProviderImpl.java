@@ -44,7 +44,10 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
         String state = stateSource.getState(chatId);
         log.debug("Getting mapping method for state: \"{}\" and update: {}", state, update);
         String message = update.getMessage().getText();
-        return getMessageMatchingMethod(update, state, message);
+        if (message != null) {
+            return getMessageMatchingMethod(update, state, message);
+        }
+        return Optional.empty();
     }
 
     private Optional<InvocationUnit> getMessageMatchingMethod(Update update, String state, String message) {
