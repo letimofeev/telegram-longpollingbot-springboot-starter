@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.databind;
+package org.telegram.telegrambot.converter;
 
 import org.springframework.stereotype.Component;
 

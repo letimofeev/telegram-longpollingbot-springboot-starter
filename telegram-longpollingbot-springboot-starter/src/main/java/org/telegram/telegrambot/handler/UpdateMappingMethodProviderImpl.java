@@ -8,7 +8,7 @@ import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.container.StringToObjectMapperContainer;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
-import org.telegram.telegrambot.databind.StringToObjectMapper;
+import org.telegram.telegrambot.converter.StringToObjectMapper;
 import org.telegram.telegrambot.model.InvocationUnit;
 import org.telegram.telegrambot.model.MethodTargetPair;
 import org.telegram.telegrambot.expection.StringToObjectMapperException;

@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.databind;
+package org.telegram.telegrambot.converter;
 
 public interface StringToObjectMapper<T> {
 
