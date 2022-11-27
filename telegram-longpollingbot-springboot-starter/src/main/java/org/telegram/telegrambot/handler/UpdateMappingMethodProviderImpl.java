@@ -3,6 +3,7 @@ package org.telegram.telegrambot.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.container.StringToObjectMapperContainer;
@@ -105,6 +106,7 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     }
 
     private Object getTypedRegexGroup(String group, Class<?> parameterType) {
+        parameterType = ClassUtils.resolvePrimitiveIfNecessary(parameterType);
         Optional<StringToObjectMapper<?>> stringToObjectMapper = mapperContainer.get(parameterType);
         if (stringToObjectMapper.isPresent()) {
             return stringToObjectMapper.get().mapToObject(group);
