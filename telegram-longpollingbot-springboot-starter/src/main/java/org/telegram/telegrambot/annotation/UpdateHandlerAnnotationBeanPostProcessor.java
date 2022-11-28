@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
-import org.telegram.telegrambot.validator.MethodSignatureValidator;
+import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcess
     private final Logger log = LoggerFactory.getLogger(UpdateHandlerAnnotationBeanPostProcessor.class);
 
     private final UpdateMappingMethodContainer methodContainer;
-    private final MethodSignatureValidator methodSignatureValidator;
+    private final ExceptionMappingMethodSignatureValidator methodSignatureValidator;
 
     public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer,
-                                                    MethodSignatureValidator methodSignatureValidator) {
+                                                    ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }
