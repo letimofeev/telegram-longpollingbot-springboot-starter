@@ -36,7 +36,6 @@ public abstract class AbstractMethodSignatureValidator implements MethodSignatur
         for (int i = 0; i < method.getParameterCount(); i++) {
             Class<?> parameterType = parameters[i].getType();
             Class<?> requiredParameterType = requiredParametersTypes[i];
-
             if (!requiredParameterType.isAssignableFrom(parameterType)) {
                 String message = String.format("Unresolved parameter for annotated method %s, " +
                                 "expected that parameters are instances of classes: %s",

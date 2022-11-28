@@ -32,22 +32,9 @@ public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturning
 
         if (apiMethods instanceof Collection) {
             log.trace("Method {} returned collection of api methods", method);
-            validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
         }
         log.trace("Method {} returned single api method", method);
         return List.of((PartialBotApiMethod<Message>) apiMethods);
-    }
-
-    private void validateCollection(Collection<?> apiMethods, Method method) {
-        log.trace("Validating collection of api methods returned from: {}", method);
-
-        for (Object apiMethod : apiMethods) {
-            if (!(apiMethod instanceof PartialBotApiMethod)) {
-                String message = String.format("Unresolved type %s in Collection " +
-                        "for method %s", apiMethod.getClass().getName(), method);
-                throw new IllegalStateException(message);
-            }
-        }
     }
 }

@@ -10,6 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 @Component
@@ -19,6 +21,7 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
 
     private static final Class<?> REQUIRED_FIRST_PARAMETER_TYPE = Update.class;
     private static final Class<?>[] ALLOWED_RETURN_TYPES = {PartialBotApiMethod.class, Collection.class};
+    private static final Class<?> ALLOWED_COLLECTION_GENERIC_RETURN_TYPE = PartialBotApiMethod.class;
 
     @Override
     public void validateMethodSignature(Method method) {
@@ -27,11 +30,33 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
         try {
             validateParameters(method);
             validateReturnType(method, ALLOWED_RETURN_TYPES);
+            validateGenericReturnType(method);
         } catch (Exception e) {
             String message = String.format("Exception during validating @UpdateMapping method %s, nested exception: %s", method.getName(), e);
             throw new MethodSignatureValidationException(message, e);
         }
         log.trace("Update handler method {} passed validation", method);
+    }
+
+    private void validateGenericReturnType(Method method) {
+        log.trace("Validation method {} generic return type", method);
+
+        Class<?> returnType = method.getReturnType();
+        if (Collection.class.isAssignableFrom(returnType)) {
+            ParameterizedType parameterizedReturnType = (ParameterizedType) method.getGenericReturnType();
+            Type actualTypeArgument = parameterizedReturnType.getActualTypeArguments()[0];
+            if (actualTypeArgument instanceof ParameterizedType) {
+                ParameterizedType parameterizedActualTypeArgument = (ParameterizedType) actualTypeArgument;
+                actualTypeArgument = parameterizedActualTypeArgument.getRawType();
+            }
+            Class<?> actualTypeArgumentClass = (Class<?>) actualTypeArgument;
+            if (!ALLOWED_COLLECTION_GENERIC_RETURN_TYPE.isAssignableFrom(actualTypeArgumentClass)) {
+                String message = String.format("Unresolved return type %s for annotated method %s, " +
+                        "expected that Collection generic type is instance of: %s",
+                        parameterizedReturnType, method, ALLOWED_COLLECTION_GENERIC_RETURN_TYPE);
+                throw new MethodSignatureValidationException(message);
+            }
+        }
     }
 
     private void validateParameters(Method method) {
