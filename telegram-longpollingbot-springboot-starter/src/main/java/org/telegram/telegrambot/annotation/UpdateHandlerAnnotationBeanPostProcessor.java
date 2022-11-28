@@ -1,15 +1,14 @@
-package org.telegram.telegrambot.container.initializer;
+package org.telegram.telegrambot.annotation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambot.annotation.UpdateHandler;
-import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.validator.MethodSignatureValidator;
-import org.telegram.telegrambot.validator.UpdateMappingMethodSignatureValidator;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,46 +16,31 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class UpdateMappingMethodContainerInitializer extends AbstractContainerInitializer<String, List<MethodTargetPair>> {
+public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodContainerInitializer.class);
+    private final Logger log = LoggerFactory.getLogger(UpdateHandlerAnnotationBeanPostProcessor.class);
 
+    private final UpdateMappingMethodContainer methodContainer;
     private final MethodSignatureValidator methodSignatureValidator;
 
-    @Autowired
-    @UpdateHandler
-    private List<Object> handlers;
-
-    protected UpdateMappingMethodContainerInitializer(UpdateMappingMethodContainer methodContainer,
-                                                      UpdateMappingMethodSignatureValidator methodSignatureValidator) {
-        super(methodContainer);
+    public UpdateHandlerAnnotationBeanPostProcessor(UpdateMappingMethodContainer methodContainer,
+                                                    MethodSignatureValidator methodSignatureValidator) {
+        this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
-    protected void processBean(Object bean) {
-        Method[] methods = bean.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            processBeanMethod(bean, method);
+    public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        Class<?> beanClass = bean.getClass();
+        if (beanClass.isAnnotationPresent(UpdateHandler.class)) {
+            for (Method method : beanClass.getDeclaredMethods()) {
+                saveUpdateMappingMethod(bean, method);
+            }
         }
+        return bean;
     }
 
-    @Override
-    protected List<Object> getBeans() {
-        return handlers;
-    }
-
-    @Override
-    protected void postProcessSavedObject(String state, List<MethodTargetPair> mappingMethods) {
-        for (MethodTargetPair mappingMethod : mappingMethods) {
-            Method method = mappingMethod.getMethod();
-            String messageRegex = method.getAnnotation(UpdateMapping.class).messageRegex();
-
-            log.info("Mapped state [\"{}\"] with message regex [\"{}\"] onto {}", state, messageRegex, method);
-        }
-    }
-
-    private void processBeanMethod(Object bean, Method method) {
+    private void saveUpdateMappingMethod(Object bean, Method method) {
         UpdateMapping annotation = method.getAnnotation(UpdateMapping.class);
         if (annotation != null) {
             methodSignatureValidator.validateMethodSignature(method);
@@ -64,6 +48,7 @@ public class UpdateMappingMethodContainerInitializer extends AbstractContainerIn
             String messageRegex = annotation.messageRegex();
             validateDuplicates(state, messageRegex, method);
             methodContainer.computeIfAbsent(state, key -> new ArrayList<>()).add(new MethodTargetPair(method, bean));
+            log.info("Mapped state [\"{}\"] with message regex [\"{}\"] onto {}", state, messageRegex, method);
         }
     }
 
