@@ -8,7 +8,6 @@ import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.annotation.UpdateMapping;
 import org.telegram.telegrambot.container.StringToObjectMapperContainer;
 import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
-import org.telegram.telegrambot.databind.StringToObjectMapper;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.StringToObjectMapperException;
@@ -30,43 +29,47 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
 
     private final StateSource stateSource;
     private final UpdateMappingMethodContainer mappingMethodContainer;
-    private final StringToObjectMapperContainer mapperContainer;
+    private final StringToObjectMapperContainer stringToObjectMapperContainer;
 
-    public UpdateMappingMethodProviderImpl(StateSource stateSource, UpdateMappingMethodContainer mappingMethodContainer, StringToObjectMapperContainer mapperContainer) {
+    public UpdateMappingMethodProviderImpl(StateSource stateSource,
+                                           UpdateMappingMethodContainer mappingMethodContainer,
+                                           StringToObjectMapperContainer stringToObjectMapperContainer) {
         this.stateSource = stateSource;
         this.mappingMethodContainer = mappingMethodContainer;
-        this.mapperContainer = mapperContainer;
+        this.stringToObjectMapperContainer = stringToObjectMapperContainer;
     }
 
     @Override
     public Optional<InvocationUnit> getUpdateMappingMethod(Update update) {
         long chatId = update.getMessage().getChatId();
         String state = stateSource.getState(chatId);
+
         log.debug("Getting mapping method for state: \"{}\" and update: {}", state, update);
+
         String message = update.getMessage().getText();
         if (message != null) {
-            return getMessageMatchingMethod(update, state, message);
+            return getMessageMatchingInvocationUnit(update, state, message);
         }
         return Optional.empty();
     }
 
-    private Optional<InvocationUnit> getMessageMatchingMethod(Update update, String state, String message) {
-        Optional<List<MethodTargetPair>> optional = mappingMethodContainer.get(state);
-        if (optional.isPresent()) {
-            List<MethodTargetPair> storedMappingMethods = optional.get();
-            for (MethodTargetPair methodTargetPair : storedMappingMethods) {
-                UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
-                String messageRegex = annotation.messageRegex();
-                if (!messageRegex.isEmpty()) {
-                    Optional<InvocationUnit> mappingWithRegexMatching = getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
-                    if (mappingWithRegexMatching.isPresent()) {
-                        return mappingWithRegexMatching;
-                    }
+    private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Update update, String state, String message) {
+        return mappingMethodContainer.get(state)
+                .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(update, message, methodTargetPairs));
+    }
+
+    private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Update update, String message, List<MethodTargetPair> storedMappingMethods) {
+        for (MethodTargetPair methodTargetPair : storedMappingMethods) {
+            UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
+            String messageRegex = annotation.messageRegex();
+            if (!messageRegex.isEmpty()) {
+                Optional<InvocationUnit> mappingWithRegexMatching = getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
+                if (mappingWithRegexMatching.isPresent()) {
+                    return mappingWithRegexMatching;
                 }
             }
-            return getMappingWithoutRegexMatching(update, storedMappingMethods);
         }
-        return Optional.empty();
+        return getMappingWithoutRegexMatching(update, storedMappingMethods);
     }
 
     private Optional<InvocationUnit> getMappingWithRegexMatching(Update update, String message, String messageRegex,
@@ -96,37 +99,38 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     private List<Object> getTypedRegexGroups(Method method, Matcher matcher) {
         List<Object> args = new ArrayList<>();
         for (Parameter parameter : method.getParameters()) {
-            RegexGroup annotation = parameter.getAnnotation(RegexGroup.class);
-            if (annotation != null) {
-                int groupNumber = annotation.value();
-                validateGroupNumber(groupNumber, matcher);
-                Class<?> parameterType = parameter.getType();
-                String group = matcher.group(groupNumber);
-                try {
-                    Object arg = getTypedRegexGroup(group, parameterType);
-                    args.add(arg);
-                } catch (Exception e) {
-                    String message = String.format("Exception during mapping regex group [\"%s\"] to parameter [%s]; " +
-                            "nested exception: %s", group, parameter, e);
-                    throw new StringToObjectMapperException(message, e);
-                }
-            }
+            addTypedArgumentFromRegexGroup(matcher, args, parameter);
         }
         return args;
     }
 
-    private Object getTypedRegexGroup(String group, Class<?> parameterType) {
-        parameterType = ClassUtils.resolvePrimitiveIfNecessary(parameterType);
-        Optional<StringToObjectMapper<?>> stringToObjectMapper = mapperContainer.get(parameterType);
-        if (stringToObjectMapper.isPresent()) {
-            return stringToObjectMapper.get().mapToObject(group);
-        } else {
-            String message = String.format("Unsupported annotated as @RegexGroup parameter type: %s. You should " +
-                            "implement StringToObjectMapper with this parameter type and add it to spring context via " +
-                            "@Component, @Bean or any other way",
-                    parameterType.getSimpleName());
-            throw new IllegalArgumentException(message);
+    private void addTypedArgumentFromRegexGroup(Matcher matcher, List<Object> args, Parameter parameter) {
+        RegexGroup annotation = parameter.getAnnotation(RegexGroup.class);
+        if (annotation != null) {
+            int groupNumber = annotation.value();
+            validateGroupNumber(groupNumber, matcher);
+            Class<?> parameterType = parameter.getType();
+            String group = matcher.group(groupNumber);
+            try {
+                Object arg = getTypedArgumentFromRegexGroup(group, parameterType);
+                args.add(arg);
+            } catch (Exception e) {
+                String message = String.format("Exception during mapping regex group [\"%s\"] to parameter [%s]; " +
+                        "nested exception: %s", group, parameter, e);
+                throw new StringToObjectMapperException(message, e);
+            }
         }
+    }
+
+    private Object getTypedArgumentFromRegexGroup(String group, Class<?> parameterType) {
+        parameterType = ClassUtils.resolvePrimitiveIfNecessary(parameterType);
+        String parameterName = parameterType.getSimpleName();
+        return stringToObjectMapperContainer.get(parameterType)
+                .map(stringToObjectMapper -> stringToObjectMapper.mapToObject(group))
+                .orElseThrow(() -> new IllegalArgumentException(String.format(
+                        "Unsupported annotated as @RegexGroup parameter type: %s. You should " +
+                                "implement StringToObjectMapper with this parameter type and add it to spring context via " +
+                                "@Component, @Bean or any other way", parameterName)));
     }
 
     private void validateGroupNumber(int groupNumber, Matcher matcher) {

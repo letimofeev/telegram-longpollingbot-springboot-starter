@@ -22,6 +22,7 @@ public class ExceptionMappingMethodSignatureValidator extends AbstractMethodSign
     @Override
     public void validateMethodSignature(Method method) {
         log.debug("Validating exception handler method: {}", method);
+
         try {
             validateParametersNumber(method, REQUIRED_PARAMETERS_NUMBER);
             validateReturnType(method, ALLOWED_RETURN_TYPES);

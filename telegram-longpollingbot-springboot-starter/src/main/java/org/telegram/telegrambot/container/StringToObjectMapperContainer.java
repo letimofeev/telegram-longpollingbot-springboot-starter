@@ -1,7 +1,7 @@
 package org.telegram.telegrambot.container;
 
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambot.databind.StringToObjectMapper;
+import org.telegram.telegrambot.converter.StringToObjectMapper;
 
 import java.util.List;
 import java.util.Map;

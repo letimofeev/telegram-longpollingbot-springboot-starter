@@ -24,26 +24,17 @@ public class ApiMethodsReturningMethodInvokerImpl implements ApiMethodsReturning
         Method method = invocationUnit.getMethod();
         Object handler = invocationUnit.getTarget();
         Object[] args = invocationUnit.getArgs();
+
         log.debug("Invoking method: {} with args: {}", method, Arrays.toString(args));
+
         Object apiMethods = ReflectionUtils.invokeMethod(method, handler, args);
         Objects.requireNonNull(apiMethods, String.format("Method supposed to return api methods %s returned null", method));
+
         if (apiMethods instanceof Collection) {
             log.trace("Method {} returned collection of api methods", method);
-            validateCollection((Collection<?>) apiMethods, method);
             return List.copyOf((Collection<? extends PartialBotApiMethod<Message>>) apiMethods);
         }
         log.trace("Method {} returned single api method", method);
         return List.of((PartialBotApiMethod<Message>) apiMethods);
-    }
-
-    private void validateCollection(Collection<?> apiMethods, Method method) {
-        log.trace("Validating collection of api methods returned from: {}", method);
-        for (Object apiMethod : apiMethods) {
-            if (!(apiMethod instanceof PartialBotApiMethod)) {
-                String message = String.format("Unresolved type %s in Collection " +
-                        "for method %s", apiMethod.getClass(), method);
-                throw new IllegalStateException(message);
-            }
-        }
     }
 }
