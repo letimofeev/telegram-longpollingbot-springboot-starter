@@ -1,56 +1,45 @@
-package org.telegram.telegrambot.container.initializer;
+
+package org.telegram.telegrambot.annotation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambot.annotation.ExceptionHandler;
-import org.telegram.telegrambot.annotation.ExceptionMapping;
 import org.telegram.telegrambot.container.ExceptionMappingMethodContainer;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.handler.DefaultExceptionHandler;
-import org.telegram.telegrambot.validator.ExceptionMappingMethodSignatureValidator;
 import org.telegram.telegrambot.validator.MethodSignatureValidator;
 
 import java.lang.reflect.Method;
-import java.util.List;
 
 @Component
-public class ExceptionMappingMethodContainerInitializer extends AbstractContainerInitializer<Class<? extends Exception>, MethodTargetPair> {
+public class ExceptionHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(ExceptionMappingMethodContainerInitializer.class);
+    private final Logger log = LoggerFactory.getLogger(ExceptionHandlerAnnotationBeanPostProcessor.class);
 
+    private final ExceptionMappingMethodContainer methodContainer;
     private final MethodSignatureValidator methodSignatureValidator;
 
-    @Autowired
-    @ExceptionHandler
-    private List<Object> handlers;
-
-    public ExceptionMappingMethodContainerInitializer(ExceptionMappingMethodContainer methodContainer,
-                                                      ExceptionMappingMethodSignatureValidator methodSignatureValidator) {
-        super(methodContainer);
+    public ExceptionHandlerAnnotationBeanPostProcessor(ExceptionMappingMethodContainer methodContainer,
+                                                       MethodSignatureValidator methodSignatureValidator) {
+        this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }
 
     @Override
-    protected void processBean(Object bean) {
-        Method[] methods = bean.getClass().getDeclaredMethods();
-        for (Method method : methods) {
-            processBeanMethod(bean, method);
+    public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        Class<?> beanClass = bean.getClass();
+        if (beanClass.isAnnotationPresent(ExceptionHandler.class)) {
+            for (Method method : beanClass.getDeclaredMethods()) {
+                saveExceptionMappingMethod(bean, method);
+            }
         }
+        return bean;
     }
 
-    @Override
-    protected List<Object> getBeans() {
-        return handlers;
-    }
-
-    @Override
-    protected void postProcessSavedObject(Class<? extends Exception> key, MethodTargetPair methodTargetPair) {
-        log.info("Mapped exception [{}] handling onto {}", key, methodTargetPair.getMethod());
-    }
-
-    private void processBeanMethod(Object bean, Method method) {
+    private void saveExceptionMappingMethod(Object bean, Method method) {
         ExceptionMapping annotation = method.getAnnotation(ExceptionMapping.class);
         if (annotation != null) {
             Class<? extends Exception> exceptionType = annotation.value();
@@ -81,8 +70,12 @@ public class ExceptionMappingMethodContainerInitializer extends AbstractContaine
         methodContainer.get(exceptionType).ifPresentOrElse(storedExceptionMapping -> {
             if (storedExceptionMapping.getTarget() instanceof DefaultExceptionHandler) {
                 methodContainer.put(exceptionType, exceptionMapping);
+                log.info("Default exception handler overwritten, mapped exception [{}] handling onto {}",
+                        exceptionType.getName(), exceptionMapping.getMethod());
             }
-        }, () -> methodContainer.put(exceptionType, exceptionMapping));
+        }, () -> {
+            methodContainer.put(exceptionType, exceptionMapping);
+            log.info("Mapped exception [{}] handling onto {}", exceptionType.getName(), exceptionMapping.getMethod());
+        });
     }
 }
-
