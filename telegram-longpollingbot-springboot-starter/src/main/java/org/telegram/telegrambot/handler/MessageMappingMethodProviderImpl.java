@@ -4,15 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
+import org.telegram.telegrambot.annotation.MessageMapping;
 import org.telegram.telegrambot.annotation.RegexGroup;
-import org.telegram.telegrambot.annotation.UpdateMapping;
+import org.telegram.telegrambot.container.MessageMappingMethodContainer;
 import org.telegram.telegrambot.container.StringToObjectMapperContainer;
-import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.StringToObjectMapperException;
 import org.telegram.telegrambot.repository.BotStateSource;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -25,75 +25,75 @@ import java.util.regex.Pattern;
 import static org.telegram.telegrambot.repository.BotState.ANY_STATE;
 
 @Component
-public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvider {
+public class MessageMappingMethodProviderImpl implements MessageMappingMethodProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodProviderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageMappingMethodProviderImpl.class);
 
     private final BotStateSource botStateSource;
-    private final UpdateMappingMethodContainer mappingMethodContainer;
+    private final MessageMappingMethodContainer mappingMethodContainer;
     private final StringToObjectMapperContainer stringToObjectMapperContainer;
 
-    public UpdateMappingMethodProviderImpl(BotStateSource botStateSource,
-                                           UpdateMappingMethodContainer mappingMethodContainer,
-                                           StringToObjectMapperContainer stringToObjectMapperContainer) {
+    public MessageMappingMethodProviderImpl(BotStateSource botStateSource,
+                                            MessageMappingMethodContainer mappingMethodContainer,
+                                            StringToObjectMapperContainer stringToObjectMapperContainer) {
         this.botStateSource = botStateSource;
         this.mappingMethodContainer = mappingMethodContainer;
         this.stringToObjectMapperContainer = stringToObjectMapperContainer;
     }
 
     @Override
-    public Optional<InvocationUnit> getUpdateMappingMethod(Update update) {
-        long chatId = update.getMessage().getChatId();
+    public Optional<InvocationUnit> getMessageMappingMethod(Message message) {
+        long chatId = message.getChatId();
         String state = botStateSource.getState(chatId);
 
-        log.debug("Getting mapping method for state: \"{}\" and update: {}", state, update);
+        log.debug("Getting mapping method for state: \"{}\" and message: {}", state, message);
 
-        String message = update.getMessage().getText();
-        if (message != null) {
-            return getMessageMatchingInvocationUnit(update, state, message);
+        String text = message.getText();
+        if (text != null) {
+            return getMessageMatchingInvocationUnit(message, state, text);
         }
         return Optional.empty();
     }
 
-    private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Update update, String state, String message) {
+    private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Message message, String state, String text) {
         return mappingMethodContainer.get(ANY_STATE)
-                .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(update, message, methodTargetPairs))
+                .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(message, text, methodTargetPairs))
                 .or(() -> mappingMethodContainer.get(state)
-                        .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(update, message, methodTargetPairs)));
+                        .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(message, text, methodTargetPairs)));
     }
 
-    private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Update update, String message, List<MethodTargetPair> storedMappingMethods) {
+    private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Message message, String text, List<MethodTargetPair> storedMappingMethods) {
         for (MethodTargetPair methodTargetPair : storedMappingMethods) {
-            UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
+            MessageMapping annotation = methodTargetPair.getMethod().getAnnotation(MessageMapping.class);
             String messageRegex = annotation.messageRegex();
             if (!messageRegex.isEmpty()) {
-                Optional<InvocationUnit> mappingWithRegexMatching = getMappingWithRegexMatching(update, message, messageRegex, methodTargetPair);
+                Optional<InvocationUnit> mappingWithRegexMatching = getMappingWithRegexMatching(message, text, messageRegex, methodTargetPair);
                 if (mappingWithRegexMatching.isPresent()) {
                     return mappingWithRegexMatching;
                 }
             }
         }
-        return getMappingWithoutRegexMatching(update, storedMappingMethods);
+        return getMappingWithoutRegexMatching(message, storedMappingMethods);
     }
 
-    private Optional<InvocationUnit> getMappingWithRegexMatching(Update update, String message, String messageRegex,
+    private Optional<InvocationUnit> getMappingWithRegexMatching(Message message, String text, String messageRegex,
                                                                  MethodTargetPair methodTargetPair) {
         Pattern pattern = Pattern.compile(messageRegex);
-        Matcher matcher = pattern.matcher(message);
+        Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
             List<Object> args = getTypedRegexGroups(methodTargetPair.getMethod(), matcher);
-            args.add(0, update);
+            args.add(0, message);
             return Optional.of(new InvocationUnit(methodTargetPair, args.toArray()));
         }
         return Optional.empty();
     }
 
-    private Optional<InvocationUnit> getMappingWithoutRegexMatching(Update update, List<MethodTargetPair> storedMappingMethods) {
+    private Optional<InvocationUnit> getMappingWithoutRegexMatching(Message message, List<MethodTargetPair> storedMappingMethods) {
         for (MethodTargetPair methodTargetPair : storedMappingMethods) {
-            UpdateMapping annotation = methodTargetPair.getMethod().getAnnotation(UpdateMapping.class);
+            MessageMapping annotation = methodTargetPair.getMethod().getAnnotation(MessageMapping.class);
             String messageRegex = annotation.messageRegex();
             if (messageRegex.isEmpty()) {
-                Object[] args = {update};
+                Object[] args = {message};
                 return Optional.of(new InvocationUnit(methodTargetPair, args));
             }
         }

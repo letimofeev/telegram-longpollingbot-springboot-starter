@@ -21,7 +21,8 @@ public class DispatchedTelegramLongPollingBot extends TelegramLongPollingBotExte
     private final UpdateResolver updateResolver;
     private final BotApiMethodExecutorResolver methodExecutorResolver;
 
-    public DispatchedTelegramLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver, BotApiMethodExecutorResolver methodExecutorResolver) {
+    public DispatchedTelegramLongPollingBot(String botUsername, String botToken, UpdateResolver updateResolver,
+                                            BotApiMethodExecutorResolver methodExecutorResolver) {
         this.botUsername = botUsername;
         this.botToken = botToken;
         this.updateResolver = updateResolver;

@@ -55,7 +55,7 @@ public class ExceptionHandlerAspect {
                                                                                 ProceedingJoinPoint joinPoint, Exception e) {
         Update update = (Update) joinPoint.getArgs()[0];
         Object[] args = {update, e};
-        log.warn("Using ExceptionMapping method: {} of class {}", methodTargetPair.getMethod(),
+        log.warn("Using ExceptionMapping method: {} of {}", methodTargetPair.getMethod(),
                 methodTargetPair.getTarget().getClass());
         return methodInvoker.invokeMethod(new InvocationUnit(methodTargetPair, args));
     }

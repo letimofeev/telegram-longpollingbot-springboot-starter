@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.annotation.RegexGroup;
 import org.telegram.telegrambot.expection.MethodSignatureValidationException;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -15,24 +15,24 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 
 @Component
-public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatureValidator {
+public class MessageMappingMethodSignatureValidator extends AbstractMethodSignatureValidator {
 
-    private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodSignatureValidator.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageMappingMethodSignatureValidator.class);
 
-    private static final Class<?> REQUIRED_FIRST_PARAMETER_TYPE = Update.class;
+    private static final Class<?> REQUIRED_FIRST_PARAMETER_TYPE = Message.class;
     private static final Class<?>[] ALLOWED_RETURN_TYPES = {PartialBotApiMethod.class, Collection.class};
     private static final Class<?> ALLOWED_COLLECTION_GENERIC_RETURN_TYPE = PartialBotApiMethod.class;
 
     @Override
     public void validateMethodSignature(Method method) {
-        log.debug("Validating update handler method: {}", method);
+        log.debug("Validating message mapping method: {}", method);
 
         try {
             validateParameters(method);
             validateReturnType(method, ALLOWED_RETURN_TYPES);
             validateGenericReturnType(method);
         } catch (Exception e) {
-            String message = String.format("Exception during validating @UpdateMapping method %s, nested exception: %s", method.getName(), e);
+            String message = String.format("Exception during validating @MessageMapping method %s, nested exception: %s", method.getName(), e);
             throw new MethodSignatureValidationException(message, e);
         }
         log.trace("Update handler method {} passed validation", method);
@@ -66,7 +66,7 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
 
         for (Parameter parameter : method.getParameters()) {
             Class<?> parameterType = parameter.getType();
-            if (!Update.class.isAssignableFrom(parameterType) && !parameter.isAnnotationPresent(RegexGroup.class)) {
+            if (!REQUIRED_FIRST_PARAMETER_TYPE.isAssignableFrom(parameterType) && !parameter.isAnnotationPresent(RegexGroup.class)) {
                 String message = String.format("Unresolved parameter %s for annotated method %s, " +
                         "expected that not Update parameter annotated with @RegexGroup", parameter, method);
                 throw new MethodSignatureValidationException(message);
@@ -82,14 +82,16 @@ public class UpdateMappingMethodSignatureValidator extends AbstractMethodSignatu
         Parameter[] parameters = method.getParameters();
         if (method.getParameterCount() < 1) {
             String message = String.format("Unresolved parameters count for annotated method %s, " +
-                    "expected at least 1 parameter instance of type: %s", method, Update.class);
+                    "expected at least 1 parameter instance of type: %s",
+                    method, REQUIRED_FIRST_PARAMETER_TYPE.getName());
             throw new MethodSignatureValidationException(message);
         }
         Parameter firstParameter = parameters[0];
         Class<?> parameterType = firstParameter.getType();
         if (!REQUIRED_FIRST_PARAMETER_TYPE.isAssignableFrom(parameterType)) {
             String message = String.format("Unresolved parameter %s for annotated method %s, " +
-                    "expected that first parameter is instance of: %s", firstParameter, method, Update.class);
+                    "expected that first parameter is instance of: %s",
+                    firstParameter, method, REQUIRED_FIRST_PARAMETER_TYPE.getName());
             throw new MethodSignatureValidationException(message);
         }
     }

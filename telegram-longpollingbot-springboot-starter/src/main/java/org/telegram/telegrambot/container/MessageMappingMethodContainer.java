@@ -6,5 +6,5 @@ import org.telegram.telegrambot.dto.MethodTargetPair;
 import java.util.List;
 
 @Component
-public class UpdateMappingMethodContainer extends AbstractContainer<String, List<MethodTargetPair>> {
+public class MessageMappingMethodContainer extends AbstractContainer<String, List<MethodTargetPair>> {
 }
