@@ -11,7 +11,7 @@ import org.telegram.telegrambot.container.UpdateMappingMethodContainer;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.dto.MethodTargetPair;
 import org.telegram.telegrambot.expection.StringToObjectMapperException;
-import org.telegram.telegrambot.repository.StateSource;
+import org.telegram.telegrambot.repository.BotStateSource;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.lang.reflect.Method;
@@ -22,19 +22,21 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.telegram.telegrambot.repository.BotState.ANY_STATE;
+
 @Component
 public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvider {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateMappingMethodProviderImpl.class);
 
-    private final StateSource stateSource;
+    private final BotStateSource botStateSource;
     private final UpdateMappingMethodContainer mappingMethodContainer;
     private final StringToObjectMapperContainer stringToObjectMapperContainer;
 
-    public UpdateMappingMethodProviderImpl(StateSource stateSource,
+    public UpdateMappingMethodProviderImpl(BotStateSource botStateSource,
                                            UpdateMappingMethodContainer mappingMethodContainer,
                                            StringToObjectMapperContainer stringToObjectMapperContainer) {
-        this.stateSource = stateSource;
+        this.botStateSource = botStateSource;
         this.mappingMethodContainer = mappingMethodContainer;
         this.stringToObjectMapperContainer = stringToObjectMapperContainer;
     }
@@ -42,7 +44,7 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     @Override
     public Optional<InvocationUnit> getUpdateMappingMethod(Update update) {
         long chatId = update.getMessage().getChatId();
-        String state = stateSource.getState(chatId);
+        String state = botStateSource.getState(chatId);
 
         log.debug("Getting mapping method for state: \"{}\" and update: {}", state, update);
 
@@ -54,8 +56,10 @@ public class UpdateMappingMethodProviderImpl implements UpdateMappingMethodProvi
     }
 
     private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Update update, String state, String message) {
-        return mappingMethodContainer.get(state)
-                .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(update, message, methodTargetPairs));
+        return mappingMethodContainer.get(ANY_STATE)
+                .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(update, message, methodTargetPairs))
+                .or(() -> mappingMethodContainer.get(state)
+                        .flatMap(methodTargetPairs -> getMessageMatchingInvocationUnit(update, message, methodTargetPairs)));
     }
 
     private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Update update, String message, List<MethodTargetPair> storedMappingMethods) {

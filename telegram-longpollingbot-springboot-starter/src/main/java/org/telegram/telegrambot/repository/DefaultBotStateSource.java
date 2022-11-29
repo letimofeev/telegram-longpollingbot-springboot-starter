@@ -3,12 +3,12 @@ package org.telegram.telegrambot.repository;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultStateSource implements StateSource {
+public class DefaultBotStateSource implements BotStateSource {
 
     private final Map<Long, String> states = new ConcurrentHashMap<>();
     private final String initialState;
 
-    public DefaultStateSource(String initialState) {
+    public DefaultBotStateSource(String initialState) {
         this.initialState = initialState;
     }
 
