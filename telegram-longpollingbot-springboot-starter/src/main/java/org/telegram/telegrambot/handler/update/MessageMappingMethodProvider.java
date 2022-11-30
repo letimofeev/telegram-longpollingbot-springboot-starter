@@ -56,8 +56,8 @@ public class MessageMappingMethodProvider implements UpdateMappingMethodProvider
     }
 
     @Override
-    public UpdateType getUpdateType() {
-        return UpdateType.MESSAGE;
+    public Class<Message> getUpdateType() {
+        return Message.class;
     }
 
     private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Message message, String state, String text) {

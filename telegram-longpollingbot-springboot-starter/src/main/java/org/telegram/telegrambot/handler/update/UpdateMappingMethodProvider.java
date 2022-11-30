@@ -8,5 +8,5 @@ public interface UpdateMappingMethodProvider<T> {
 
     Optional<InvocationUnit> getUpdateMappingMethod(T apiObject);
 
-    UpdateType getUpdateType();
+    Class<T> getUpdateType();
 }

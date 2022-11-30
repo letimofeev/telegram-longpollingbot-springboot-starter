@@ -17,11 +17,11 @@ public class UpdateMappingMethodProviderResolverImpl implements UpdateMappingMet
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends BotApiObject> InvocationUnit getUpdateMappingMethod(T apiObject, UpdateType updateType) {
-        return methodProviderContainer.get(updateType)
+    public <T extends BotApiObject> InvocationUnit getUpdateMappingMethod(T apiObject) {
+        return methodProviderContainer.get(apiObject.getClass())
                 .map(methodProvider -> (UpdateMappingMethodProvider<T>) methodProvider)
                 .flatMap(methodProvider -> methodProvider.getUpdateMappingMethod(apiObject))
-                .orElseThrow(() -> new NoUpdateHandlerFoundException(String.format("No handlers found for update type %s " +
-                        "and update: %s", updateType, apiObject)));
+                .orElseThrow(() -> new NoUpdateHandlerFoundException(String.format("No handlers found for " +
+                        "update: %s", apiObject)));
     }
 }

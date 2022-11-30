@@ -5,5 +5,5 @@ import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 
 public interface UpdateMappingMethodProviderResolver {
 
-    <T extends BotApiObject> InvocationUnit getUpdateMappingMethod(T apiObject, UpdateType updateType);
+    <T extends BotApiObject> InvocationUnit getUpdateMappingMethod(T apiObject);
 }

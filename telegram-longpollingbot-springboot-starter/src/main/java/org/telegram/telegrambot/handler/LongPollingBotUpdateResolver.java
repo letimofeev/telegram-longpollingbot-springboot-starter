@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.handler.update.UpdateMappingMethodProviderResolver;
-import org.telegram.telegrambot.handler.update.UpdateType;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -37,7 +36,7 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
         long chatId;
         InvocationUnit mappingMethod;
         if (update.hasMessage()) {
-            mappingMethod = methodProviderResolver.getUpdateMappingMethod(update.getMessage(), UpdateType.MESSAGE);
+            mappingMethod = methodProviderResolver.getUpdateMappingMethod(update.getMessage());
         } else {
             throw new UnsupportedOperationException();
         }
