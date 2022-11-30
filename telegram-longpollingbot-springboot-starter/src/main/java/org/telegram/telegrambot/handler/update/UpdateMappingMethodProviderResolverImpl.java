@@ -17,13 +17,10 @@ public class UpdateMappingMethodProviderResolverImpl implements UpdateMappingMet
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends BotApiObject> Optional<InvocationUnit> getUpdateMappingMethod(T apiObject, UpdateType updateType) {
-        Optional<UpdateMappingMethodProvider<? extends BotApiObject>> methodProviderOptional = methodProviderContainer.get(updateType);
-        if (methodProviderOptional.isEmpty()) {
-            return Optional.empty();
-        }
-        @SuppressWarnings("unchecked")
-        UpdateMappingMethodProvider<T> methodProvider = (UpdateMappingMethodProvider<T>) methodProviderOptional.get();
-        return methodProvider.getUpdateMappingMethod(apiObject);
+        return methodProviderContainer.get(updateType)
+                .map(methodProvider -> (UpdateMappingMethodProvider<T>) methodProvider)
+                .flatMap(methodProvider -> methodProvider.getUpdateMappingMethod(apiObject));
     }
 }
