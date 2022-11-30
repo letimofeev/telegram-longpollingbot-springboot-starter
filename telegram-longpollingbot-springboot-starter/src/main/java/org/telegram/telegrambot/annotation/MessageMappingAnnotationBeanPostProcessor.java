@@ -15,15 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class UpdateHandlerAnnotationBeanPostProcessor implements BeanPostProcessor {
+public class MessageMappingAnnotationBeanPostProcessor implements BeanPostProcessor {
 
-    private final Logger log = LoggerFactory.getLogger(UpdateHandlerAnnotationBeanPostProcessor.class);
+    private final Logger log = LoggerFactory.getLogger(MessageMappingAnnotationBeanPostProcessor.class);
 
     private final MessageMappingMethodContainer methodContainer;
     private final MessageMappingMethodSignatureValidator methodSignatureValidator;
 
-    public UpdateHandlerAnnotationBeanPostProcessor(MessageMappingMethodContainer methodContainer,
-                                                    MessageMappingMethodSignatureValidator methodSignatureValidator) {
+    public MessageMappingAnnotationBeanPostProcessor(MessageMappingMethodContainer methodContainer,
+                                                     MessageMappingMethodSignatureValidator methodSignatureValidator) {
         this.methodContainer = methodContainer;
         this.methodSignatureValidator = methodSignatureValidator;
     }

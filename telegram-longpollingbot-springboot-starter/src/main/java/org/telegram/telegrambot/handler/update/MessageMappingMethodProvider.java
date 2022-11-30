@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.handler;
+package org.telegram.telegrambot.handler.update;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,24 +25,24 @@ import java.util.regex.Pattern;
 import static org.telegram.telegrambot.repository.BotState.ANY_STATE;
 
 @Component
-public class MessageMappingMethodProviderImpl implements MessageMappingMethodProvider {
+public class MessageMappingMethodProvider implements UpdateMappingMethodProvider<Message> {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageMappingMethodProviderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageMappingMethodProvider.class);
 
     private final BotStateSource botStateSource;
     private final MessageMappingMethodContainer mappingMethodContainer;
     private final StringToObjectMapperContainer stringToObjectMapperContainer;
 
-    public MessageMappingMethodProviderImpl(BotStateSource botStateSource,
-                                            MessageMappingMethodContainer mappingMethodContainer,
-                                            StringToObjectMapperContainer stringToObjectMapperContainer) {
+    public MessageMappingMethodProvider(BotStateSource botStateSource,
+                                        MessageMappingMethodContainer mappingMethodContainer,
+                                        StringToObjectMapperContainer stringToObjectMapperContainer) {
         this.botStateSource = botStateSource;
         this.mappingMethodContainer = mappingMethodContainer;
         this.stringToObjectMapperContainer = stringToObjectMapperContainer;
     }
 
     @Override
-    public Optional<InvocationUnit> getMessageMappingMethod(Message message) {
+    public Optional<InvocationUnit> getUpdateMappingMethod(Message message) {
         long chatId = message.getChatId();
         String state = botStateSource.getState(chatId);
 
@@ -53,6 +53,11 @@ public class MessageMappingMethodProviderImpl implements MessageMappingMethodPro
             return getMessageMatchingInvocationUnit(message, state, text);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public UpdateType getUpdateType() {
+        return UpdateType.MESSAGE;
     }
 
     private Optional<InvocationUnit> getMessageMatchingInvocationUnit(Message message, String state, String text) {
