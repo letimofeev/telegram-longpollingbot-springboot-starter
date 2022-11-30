@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.InvocationUnit;
-import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
 import org.telegram.telegrambot.handler.update.UpdateMappingMethodProviderResolver;
 import org.telegram.telegrambot.handler.update.UpdateType;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -35,14 +34,15 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
     public List<? extends PartialBotApiMethod<Message>> getResponse(Update update) {
         log.debug("Resolving response for update: {}", update);
 
+        long chatId;
+        InvocationUnit mappingMethod;
         if (update.hasMessage()) {
-            InvocationUnit mappingMethod = methodProviderResolver.getUpdateMappingMethod(update.getMessage(), UpdateType.MESSAGE)
-                    .orElseThrow(() -> new NoUpdateHandlerFoundException("No handlers found for update: " + update));
-            List<? extends PartialBotApiMethod<Message>> botApiMethods = methodInvoker.invokeMethod(mappingMethod);
-            long chatId = update.getMessage().getChatId();
-            stateManager.setNewStateIfRequired(chatId, mappingMethod.getMethod());
-            return botApiMethods;
+            mappingMethod = methodProviderResolver.getUpdateMappingMethod(update.getMessage(), UpdateType.MESSAGE);
+        } else {
+            throw new UnsupportedOperationException();
         }
-        throw new UnsupportedOperationException();
+        chatId = update.getMessage().getChatId();
+        stateManager.setNewStateIfRequired(chatId, mappingMethod.getMethod());
+        return methodInvoker.invokeMethod(mappingMethod);
     }
 }
