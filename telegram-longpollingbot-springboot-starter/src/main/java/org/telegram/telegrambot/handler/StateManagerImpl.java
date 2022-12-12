@@ -1,7 +1,7 @@
 package org.telegram.telegrambot.handler;
 
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambot.annotation.MessageMapping;
+import org.telegram.telegrambot.annotation.NewBotState;
 import org.telegram.telegrambot.repository.BotStateSource;
 
 import java.lang.reflect.Method;
@@ -17,12 +17,10 @@ public class StateManagerImpl implements StateManager {
 
     @Override
     public void setNewStateIfRequired(long chatId, Method updateMappingMethod) {
-        MessageMapping annotation = updateMappingMethod.getAnnotation(MessageMapping.class);
+        NewBotState annotation = updateMappingMethod.getAnnotation(NewBotState.class);
         if (annotation != null) {
-            String newState = annotation.newState();
-            if (!newState.isEmpty()) {
-                botStateSource.setState(chatId, newState);
-            }
+            String newState = annotation.value();
+            botStateSource.setState(chatId, newState);
         }
     }
 }

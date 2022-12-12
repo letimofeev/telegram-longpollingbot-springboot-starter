@@ -14,6 +14,4 @@ public @interface MessageMapping {
     String state() default DEFAULT_INITIAL_STATE;
 
     String messageRegex() default "";
-
-    String newState() default "";
 }
