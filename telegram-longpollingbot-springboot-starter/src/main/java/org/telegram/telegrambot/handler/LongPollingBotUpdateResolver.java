@@ -19,13 +19,16 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
 
     private final UpdateMappingMethodProviderResolver methodProviderResolver;
     private final ApiMethodsReturningMethodInvoker methodInvoker;
+    private final BotApiObjectExtractor apiObjectExtractor;
     private final StateManager stateManager;
 
     public LongPollingBotUpdateResolver(UpdateMappingMethodProviderResolver methodProviderResolver,
                                         ApiMethodsReturningMethodInvoker methodInvoker,
+                                        BotApiObjectExtractor apiObjectExtractor,
                                         StateManager stateManager) {
         this.methodProviderResolver = methodProviderResolver;
         this.methodInvoker = methodInvoker;
+        this.apiObjectExtractor = apiObjectExtractor;
         this.stateManager = stateManager;
     }
 
@@ -34,12 +37,7 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
     public List<? extends PartialBotApiMethod<Message>> getResponse(Update update) {
         log.debug("Resolving response for update: {}", update);
 
-        BotApiObject apiObject;
-        if (update.hasMessage()) {
-            apiObject = update.getMessage();
-        } else {
-            throw new UnsupportedOperationException();
-        }
+        BotApiObject apiObject = apiObjectExtractor.extract(update);
         InvocationUnit mappingMethod = methodProviderResolver.getUpdateMappingMethod(apiObject);
         long chatId = update.getMessage().getChatId();
         stateManager.setNewStateIfRequired(chatId, mappingMethod.getMethod());
