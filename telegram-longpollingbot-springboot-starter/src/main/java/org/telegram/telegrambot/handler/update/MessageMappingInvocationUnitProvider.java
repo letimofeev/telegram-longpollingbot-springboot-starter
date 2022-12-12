@@ -25,24 +25,24 @@ import java.util.regex.Pattern;
 import static org.telegram.telegrambot.repository.BotState.ANY_STATE;
 
 @Component
-public class MessageMappingMethodProvider implements UpdateMappingMethodProvider<Message> {
+public class MessageMappingInvocationUnitProvider implements UpdateMappingInvocationUnitProvider<Message> {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageMappingMethodProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(MessageMappingInvocationUnitProvider.class);
 
     private final BotStateSource botStateSource;
     private final MessageMappingMethodContainer mappingMethodContainer;
     private final StringToObjectMapperContainer stringToObjectMapperContainer;
 
-    public MessageMappingMethodProvider(BotStateSource botStateSource,
-                                        MessageMappingMethodContainer mappingMethodContainer,
-                                        StringToObjectMapperContainer stringToObjectMapperContainer) {
+    public MessageMappingInvocationUnitProvider(BotStateSource botStateSource,
+                                                MessageMappingMethodContainer mappingMethodContainer,
+                                                StringToObjectMapperContainer stringToObjectMapperContainer) {
         this.botStateSource = botStateSource;
         this.mappingMethodContainer = mappingMethodContainer;
         this.stringToObjectMapperContainer = stringToObjectMapperContainer;
     }
 
     @Override
-    public Optional<InvocationUnit> getUpdateMappingMethod(Message message) {
+    public Optional<InvocationUnit> getUpdateMappingInvocationUnit(Message message) {
         long chatId = message.getChatId();
         String state = botStateSource.getState(chatId);
 

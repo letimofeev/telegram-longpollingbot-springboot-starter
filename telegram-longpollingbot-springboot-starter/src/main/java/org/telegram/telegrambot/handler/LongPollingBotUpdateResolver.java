@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambot.dto.InvocationUnit;
-import org.telegram.telegrambot.handler.update.UpdateMappingMethodProviderResolver;
+import org.telegram.telegrambot.handler.update.UpdateMappingInvocationUnitProviderResolver;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -17,12 +17,12 @@ public class LongPollingBotUpdateResolver implements UpdateResolver {
 
     private static final Logger log = LoggerFactory.getLogger(LongPollingBotUpdateResolver.class);
 
-    private final UpdateMappingMethodProviderResolver methodProviderResolver;
+    private final UpdateMappingInvocationUnitProviderResolver methodProviderResolver;
     private final ApiMethodsReturningMethodInvoker methodInvoker;
     private final BotApiObjectExtractor apiObjectExtractor;
     private final StateManager stateManager;
 
-    public LongPollingBotUpdateResolver(UpdateMappingMethodProviderResolver methodProviderResolver,
+    public LongPollingBotUpdateResolver(UpdateMappingInvocationUnitProviderResolver methodProviderResolver,
                                         ApiMethodsReturningMethodInvoker methodInvoker,
                                         BotApiObjectExtractor apiObjectExtractor,
                                         StateManager stateManager) {

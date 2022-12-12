@@ -1,17 +1,17 @@
 package org.telegram.telegrambot.handler.update;
 
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambot.container.UpdateMappingMethodProviderContainer;
+import org.telegram.telegrambot.container.UpdateMappingInvocationUnitProviderContainer;
 import org.telegram.telegrambot.dto.InvocationUnit;
 import org.telegram.telegrambot.expection.NoUpdateHandlerFoundException;
 import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 
 @Component
-public class UpdateMappingMethodProviderResolverImpl implements UpdateMappingMethodProviderResolver {
+public class UpdateMappingInvocationUnitProviderResolverImpl implements UpdateMappingInvocationUnitProviderResolver {
 
-    private final UpdateMappingMethodProviderContainer methodProviderContainer;
+    private final UpdateMappingInvocationUnitProviderContainer methodProviderContainer;
 
-    public UpdateMappingMethodProviderResolverImpl(UpdateMappingMethodProviderContainer methodProviderContainer) {
+    public UpdateMappingInvocationUnitProviderResolverImpl(UpdateMappingInvocationUnitProviderContainer methodProviderContainer) {
         this.methodProviderContainer = methodProviderContainer;
     }
 
@@ -19,8 +19,8 @@ public class UpdateMappingMethodProviderResolverImpl implements UpdateMappingMet
     @SuppressWarnings("unchecked")
     public <T extends BotApiObject> InvocationUnit getUpdateMappingMethod(T apiObject) {
         return methodProviderContainer.get(apiObject.getClass())
-                .map(methodProvider -> (UpdateMappingMethodProvider<T>) methodProvider)
-                .flatMap(methodProvider -> methodProvider.getUpdateMappingMethod(apiObject))
+                .map(methodProvider -> (UpdateMappingInvocationUnitProvider<T>) methodProvider)
+                .flatMap(methodProvider -> methodProvider.getUpdateMappingInvocationUnit(apiObject))
                 .orElseThrow(() -> new NoUpdateHandlerFoundException(String.format("No handlers found for " +
                         "update: %s", apiObject)));
     }

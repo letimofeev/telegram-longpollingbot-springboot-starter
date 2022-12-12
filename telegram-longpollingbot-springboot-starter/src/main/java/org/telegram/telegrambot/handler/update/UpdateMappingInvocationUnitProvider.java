@@ -4,9 +4,9 @@ import org.telegram.telegrambot.dto.InvocationUnit;
 
 import java.util.Optional;
 
-public interface UpdateMappingMethodProvider<T> {
+public interface UpdateMappingInvocationUnitProvider<T> {
 
-    Optional<InvocationUnit> getUpdateMappingMethod(T apiObject);
+    Optional<InvocationUnit> getUpdateMappingInvocationUnit(T apiObject);
 
     Class<T> getUpdateType();
 }
