@@ -5,7 +5,7 @@ import org.telegram.telegrambots.meta.api.interfaces.BotApiObject;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-public class LongpollingBotApiObjectExtractor implements BotApiObjectExtractor {
+public class LongPollingBotApiObjectExtractor implements BotApiObjectExtractor {
 
     @Override
     public BotApiObject extract(Update update) {
