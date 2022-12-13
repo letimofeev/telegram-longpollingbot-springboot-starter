@@ -20,6 +20,10 @@ public abstract class AbstractContainer<K, V> {
         container.put(key, value);
     }
 
+    public void putIfAbsent(K key, V value) {
+        container.putIfAbsent(key, value);
+    }
+
     public Set<Map.Entry<K, V>> getEntrySet() {
         return container.entrySet();
     }
