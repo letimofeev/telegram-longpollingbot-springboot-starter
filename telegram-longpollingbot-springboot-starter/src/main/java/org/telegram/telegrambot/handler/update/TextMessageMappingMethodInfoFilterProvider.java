@@ -9,13 +9,13 @@ import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
 @Component
-public class TextMessageMappingMethodInfoFilterChainContributor implements UpdateMappingMethodInfoFilterChainContributor {
+public class TextMessageMappingMethodInfoFilterProvider implements UpdateMappingMethodInfoFilterProvider {
 
     private final AntPathMatcher matcher = new AntPathMatcher();
 
     @Override
-    public void addFilter(Update update, UpdateMappingMethodInfoFilterChain filterChain) {
-        Predicate<UpdateMappingMethodInfo> filter = mappingMethodInfo -> {
+    public Predicate<UpdateMappingMethodInfo> getFilter(Update update) {
+        return mappingMethodInfo -> {
             if (!(update.hasMessage() && update.getMessage().hasText())) {
                 return false;
             }
@@ -33,6 +33,5 @@ public class TextMessageMappingMethodInfoFilterChainContributor implements Updat
             }
             return false;
         };
-        filterChain.addFilter(filter);
     }
 }

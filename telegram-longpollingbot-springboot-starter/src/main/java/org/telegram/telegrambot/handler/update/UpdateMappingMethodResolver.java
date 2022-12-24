@@ -6,26 +6,28 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Component
 public class UpdateMappingMethodResolver {
 
-    private final List<UpdateMappingMethodInfoFilterChainContributor> filterChainContributors;
+    private final List<UpdateMappingMethodInfoFilterProvider> filterProviders;
     private final UpdateMappingInfoRegistry mappingInfoRegistry;
     private final UpdateMappingMethodArgumentResolverComposite argumentResolver;
 
-    public UpdateMappingMethodResolver(List<UpdateMappingMethodInfoFilterChainContributor> filterChainContributors,
+    public UpdateMappingMethodResolver(List<UpdateMappingMethodInfoFilterProvider> filterProviders,
                                        UpdateMappingInfoRegistry mappingInfoRegistry,
                                        UpdateMappingMethodArgumentResolverComposite argumentResolver) {
-        this.filterChainContributors = filterChainContributors;
+        this.filterProviders = filterProviders;
         this.mappingInfoRegistry = mappingInfoRegistry;
         this.argumentResolver = argumentResolver;
     }
 
     public InvocableUpdateMappingMethod resolveMappingMethod(Update update) {
         UpdateMappingMethodInfoFilterChain mappingFilterChain = new UpdateMappingMethodInfoFilterChain();
-        for (UpdateMappingMethodInfoFilterChainContributor filterChainContributor : filterChainContributors) {
-            filterChainContributor.addFilter(update, mappingFilterChain);
+        for (UpdateMappingMethodInfoFilterProvider filterProvider : filterProviders) {
+            Predicate<UpdateMappingMethodInfo> filter = filterProvider.getFilter(update);
+            mappingFilterChain.addFilter(filter);
         }
         List<UpdateMappingMethodInfo> mappingInfos = mappingInfoRegistry.getFilteredMappingInfos(mappingFilterChain);
         if (mappingInfos.isEmpty()) {
