@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.handler.update;
+package org.telegram.telegrambot.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

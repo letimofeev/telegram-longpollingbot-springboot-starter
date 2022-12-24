@@ -3,6 +3,7 @@ package org.telegram.telegrambot.handler.update;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.telegram.telegrambot.annotation.MessageMapping;
+import org.telegram.telegrambot.annotation.PatternVariable;
 import org.telegram.telegrambot.container.StringToObjectMapperContainer;
 import org.telegram.telegrambot.converter.StringToObjectMapper;
 import org.telegram.telegrambots.meta.api.objects.Message;
