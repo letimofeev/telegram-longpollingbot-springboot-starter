@@ -11,7 +11,7 @@ import org.telegram.telegrambot.annotation.ConditionalOnBotProperties;
 import org.telegram.telegrambot.bot.DispatchedTelegramLongPollingBot;
 import org.telegram.telegrambot.bot.TelegramLongPollingBotExtended;
 import org.telegram.telegrambot.handler.BotApiMethodExecutorResolver;
-import org.telegram.telegrambot.handler.UpdateResolver;
+import org.telegram.telegrambot.handler.update.BotUpdateDispatcher;
 import org.telegram.telegrambots.starter.TelegramBotStarterConfiguration;
 
 @Configuration
@@ -25,8 +25,8 @@ public class TelegramBotAutoConfiguration {
     @ConditionalOnBotProperties
     public TelegramLongPollingBotExtended longPollingBot(@Value("${telegrambot.username}}") String botUsername,
                                                          @Value("${telegrambot.token}") String botToken,
-                                                         UpdateResolver updateResolver,
+                                                         BotUpdateDispatcher updateDispatcher,
                                                          BotApiMethodExecutorResolver methodExecutorResolver) {
-        return new DispatchedTelegramLongPollingBot(botUsername, botToken, updateResolver, methodExecutorResolver);
+        return new DispatchedTelegramLongPollingBot(botUsername, botToken, updateDispatcher, methodExecutorResolver);
     }
 }

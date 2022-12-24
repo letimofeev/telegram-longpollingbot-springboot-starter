@@ -1,4 +1,4 @@
-package org.telegram.telegrambot.annotation;
+package org.telegram.telegrambot.handler.update;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,9 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MessageMapping {
+public @interface StateMapping {
 
-    String message() default "";
-
-    String messagePattern() default "";
+    String state() default "";
 }
